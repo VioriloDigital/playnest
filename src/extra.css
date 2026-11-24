@@ -89,3 +89,7 @@ header .lang { top: calc(24px + var(--sat)); }
 .play { padding-top: calc(12px + var(--sat)); }
 nav { height: calc(74px + var(--sab)); padding-bottom: var(--sab); }
 .toast { bottom: calc(84px + var(--sab)); }
+.reportBox { background: #faf7ff; border-color: #ece4ff; }
+.reportReasons { display: grid; gap: 6px; }
+.aboutLinks { display: grid; gap: 10px; }
+.aboutLinks a { color: #0f766e; font-weight: 700; text-decoration: none; padding: 6px 0; }

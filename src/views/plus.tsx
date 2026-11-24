@@ -61,16 +61,8 @@ export function PlusHome() {
           <RecCard key={a.id} a={a} />
         ))}
       </div>
-      <div className="grid2" style={{ marginTop: 12 }}>
-        <div className="card2">
-          <b>€2.99 / {p("μήνα", "month")}</b>
-        </div>
-        <div className="card2">
-          <b>€19.99 / {p("έτος", "year")} ⭐</b>
-        </div>
-      </div>
       <div className="plusPanel">
-        <b>{p("Plus preview ενεργό", "Plus preview active")}</b>
+        <b>{p("🎁 Δωρεάν κατά τη δοκιμαστική περίοδο", "🎁 Free during the trial period")}</b>
         <p className="small">
           {p(
             "Οι λειτουργίες Plus είναι ανοιχτές για δοκιμή. Οι συνδρομές δεν έχουν ενεργοποιηθεί ακόμη και δεν γίνεται καμία χρέωση.",

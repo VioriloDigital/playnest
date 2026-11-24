@@ -41,6 +41,8 @@ export async function syncReminders(r: Reminder, lang: Lang): Promise<boolean> {
       title: lang === "el" ? "🐦 Ώρα για παιχνίδι!" : "🐦 Time to play!",
       body: `${a.emoji} ${actText.title(a, lang)}: ${actText.desc(a, lang)}`,
       schedule: { at, allowWhileIdle: true },
+      // Inexact is fine for a daily nudge and needs no exact-alarm permission.
+      isExactNotification: false,
       extra: { actId: a.id },
     })
   }

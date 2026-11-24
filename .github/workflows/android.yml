@@ -62,8 +62,11 @@ jobs:
         working-directory: android
         env:
           PLAYNEST_KEYSTORE_PASSWORD: ${{ secrets.PLAYNEST_KEYSTORE_PASSWORD }}
-          PLAYNEST_VERSION_CODE: ${{ github.run_number }}
-        run: ./gradlew --no-daemon assembleDebug
+        run: |
+          # One growing number for every build (APK and Play Store AAB): minutes since 2026-01-01.
+          export PLAYNEST_VERSION_CODE=$(( ($(date +%s) - 1767225600) / 60 ))
+          echo "versionCode $PLAYNEST_VERSION_CODE"
+          ./gradlew --no-daemon assembleDebug
 
       - name: Upload PlayNest APK
         uses: actions/upload-artifact@v4

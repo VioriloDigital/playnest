@@ -59,7 +59,35 @@ async function takeQuota(req: Request, env: Env): Promise<{ ok: true } | { ok: f
   return { ok: true }
 }
 
+/** Stores a parent's report about an AI activity (kept 180 days, no identity data). */
+async function handleReport(req: Request, env: Env): Promise<Response> {
+  const day = new Date().toISOString().slice(0, 10)
+  const ip = req.headers.get("cf-connecting-ip") ?? "unknown"
+  const limitKey = `rep:${ip}:${day}`
+  const n = Number((await env.AI_USAGE.get(limitKey)) ?? 0)
+  if (n >= 20) return json(req, { error: "limit" }, 429)
+  let body: Record<string, unknown>
+  try {
+    body = await req.json()
+  } catch {
+    return json(req, { error: "bad_request" }, 400)
+  }
+  const report = {
+    at: new Date().toISOString(),
+    reason: pick(body.reason, ["unsafe", "inappropriate", "wrong"] as const, "wrong"),
+    activity: JSON.stringify(body.activity ?? null).slice(0, 6000),
+  }
+  await Promise.all([
+    env.AI_USAGE.put(`report:${report.at}:${crypto.randomUUID().slice(0, 8)}`, JSON.stringify(report), {
+      expirationTtl: 180 * 86400,
+    }),
+    env.AI_USAGE.put(limitKey, String(n + 1), { expirationTtl: 172800 }),
+  ])
+  return json(req, { ok: true })
+}
+
 async function handleAI(req: Request, env: Env, kind: string): Promise<Response> {
+  if (kind === "report") return handleReport(req, env)
   if (!env.ANTHROPIC_API_KEY) return json(req, { error: "not_configured" }, 503)
   let body: Record<string, unknown>
   try {
@@ -124,6 +152,7 @@ export default {
     }
 
     let path = url.pathname
+    if (!FILES[path] && FILES[`${path}.html`]) path = `${path}.html` // /privacy, /terms
     if (!FILES[path]) path = "/index.html"
     const [type, data, binary] = FILES[path]
     const body = binary ? Uint8Array.from(atob(data), (c) => c.charCodeAt(0)) : data
