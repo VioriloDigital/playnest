@@ -1,0 +1,26 @@
+/* PlayNest 2.0: React rebuild additions */
+button { font: inherit; color: inherit; cursor: pointer; }
+.activity-mini, .excard, .recCard, .resultCard, .dayBody { text-align: left; width: 100%; font: inherit; }
+.activity-mini { border: 1px solid #edf1f2; }
+.dayBody { background: none; border: 0; padding: 0; }
+header .logo { background: none; border: 0; padding: 0; cursor: pointer; font-family: inherit; }
+.exploreBtn {
+  width: 100%; border: 0; border-radius: 18px; padding: 14px 16px; margin: 14px 0 0;
+  background: #3da9b6; color: white; font-weight: 800; font-size: 16px;
+  box-shadow: 0 6px 18px #33415522;
+}
+.exwrap { padding: 0; }
+.exhead { position: static; background: none; backdrop-filter: none; }
+.exclose { border: 0; border-radius: 50%; width: 40px; height: 40px; background: #eef3f3; }
+.excard { display: block; }
+.profileActions { display: flex; gap: 6px; margin-left: auto; }
+.chip.locked { opacity: .45; }
+.soft.sel { outline: 3px solid #15bca6; }
+.toast { pointer-events: none; }
+:focus-visible { outline: 3px solid #3da9b6; outline-offset: 2px; }
+@media print {
+  .noprint, nav, header { display: none !important; }
+  body { background: white; }
+  .app { padding: 0; }
+  section, .activity-card { box-shadow: none; break-inside: avoid; }
+}
