@@ -76,6 +76,14 @@ export interface Reminder {
   time: string
 }
 
+/** A picture routine for the "Now → Next" tool (e.g. morning, bedtime). */
+export interface Routine {
+  id: string
+  emoji: string
+  name: string
+  items: { emoji: string; label: string }[]
+}
+
 export interface AppState {
   lang: Lang
   profiles: ChildProfile[]
@@ -93,6 +101,8 @@ export interface AppState {
   reminder: Reminder
   /** Activities created by PlayNest AI, newest first. */
   aiActivities: Activity[]
+  /** Picture routines (Tools → Now & Next). Empty means "use the defaults for the language". */
+  routines: Routine[]
 }
 
 export const AGES: Age[] = ["1-2", "2-3", "3-4", "4-6", "6-8"]

@@ -49,6 +49,7 @@ export const defaultState: AppState = {
   log: [],
   reminder: { on: false, time: "17:30" },
   aiActivities: [],
+  routines: [],
 }
 
 /** Load state, migrating data saved by PlayNest V1 (pn_* keys and playnest_plus_v2). */

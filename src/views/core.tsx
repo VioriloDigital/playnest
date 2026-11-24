@@ -15,6 +15,7 @@ import { actText, DAYS, greeting, label, PLACE_LABEL, pick2, t, TYPE_LABEL } fro
 import { BADGES, dayKey, removeEntry, stats } from "../lib/journal"
 import { useCompleteActivity } from "../lib/rewards"
 import { StarsCard } from "./rewards"
+import { ToolsCard } from "./tools"
 import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
 import { back, go } from "../lib/router"
@@ -64,6 +65,7 @@ export function Home() {
       </button>
       <ProfileCard />
       <StarsCard />
+      <ToolsCard />
       <SectionTitle>{t(l, "quick")}</SectionTitle>
       <div className="chips">
         {QUICK.map((k) => (
