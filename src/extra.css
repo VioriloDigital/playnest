@@ -77,3 +77,15 @@ input.toggle { width: 48px; height: 28px; accent-color: #15bca6; }
 .miniActions button { border: 0; background: #fff; border-radius: 16px; padding: 10px 4px; font-size: 12px; font-weight: 700; color: #334155; box-shadow: 0 4px 12px #0f172a0c; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .miniActions button span { font-size: 22px; }
 .activity-card + .grid2, .doneSheet { margin-top: 12px; }
+
+/* Safe areas: Android (Capacitor sets --safe-area-inset-*) and iOS / installed web app (env()) */
+:root {
+  --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+}
+.app { padding-bottom: calc(88px + var(--sab)); }
+header { padding-top: calc(26px + var(--sat)); }
+header .lang { top: calc(24px + var(--sat)); }
+.play { padding-top: calc(12px + var(--sat)); }
+nav { height: calc(74px + var(--sab)); padding-bottom: var(--sab); }
+.toast { bottom: calc(84px + var(--sab)); }
