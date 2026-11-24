@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import logo from "./logo.png"
 import { t, type TKey } from "./lib/i18n"
 import { back, canGoBack, go, useRoute } from "./lib/router"
 import { useStore } from "./lib/store"
@@ -85,8 +86,7 @@ export default function App() {
     <div className="app">
       <header className="noprint">
         <button className="logo" onClick={() => goTab("")} aria-label="PlayNest">
-          Play<span>Nest</span>
-          <span className="bird">🐦</span>
+          <img src={logo} alt="PlayNest" width={120} height={120} />
         </button>
         <button
           className="lang"

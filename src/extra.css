@@ -24,3 +24,5 @@ header .logo { background: none; border: 0; padding: 0; cursor: pointer; font-fa
   .app { padding: 0; }
   section, .activity-card { box-shadow: none; break-inside: avoid; }
 }
+header .logo img { display: block; width: 120px; height: 120px; border-radius: 26px; box-shadow: 0 8px 22px #0f172a14; }
+@media (max-width: 600px) { header .logo img { width: 104px; height: 104px; border-radius: 23px; } }
