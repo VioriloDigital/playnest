@@ -21,7 +21,7 @@
 pnpm install
 pnpm dev            # http://localhost:5173
 pnpm build          # έλεγχος τύπων + build στο dist/
-pnpm deploy:web     # Cloudflare Workers (static assets)
+pnpm deploy:web     # Cloudflare Workers (static assets) → https://playnest.kosbouris.workers.dev
 pnpm cap:sync       # build + αντιγραφή στο android/ και ios/
 pnpm android:apk    # debug APK (χρειάζεται Android SDK, JDK 21)
 ```
@@ -36,3 +36,9 @@ pnpm android:apk    # debug APK (χρειάζεται Android SDK, JDK 21)
 - `.github/workflows/android.yml`: debug APK σε κάθε push στο `main` (artifact `PlayNest-APK`)
 - `.github/workflows/ios.yml`: build για iOS Simulator
 - `.github/workflows/deploy-web.yml`: χειροκίνητο deploy στο Cloudflare (secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`)
+
+## Deploy χωρίς static-assets upload
+Αν το upload των assets του Wrangler αποτύχει (π.χ. πίσω από proxy που αλλάζει το `Authorization`), το `scripts/embed-worker.mjs` βάζει όλο το `dist/` μέσα σε ένα Worker:
+```bash
+pnpm build && node scripts/embed-worker.mjs && wrangler deploy -c wrangler.embedded.jsonc
+```
