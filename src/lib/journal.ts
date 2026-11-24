@@ -15,7 +15,7 @@ function newId(): string {
 
 export function addEntry(
   s: AppState,
-  e: { actId: number; note?: string; rating?: Rating; weekDay?: number },
+  e: { actId: number; note?: string; rating?: Rating; weekDay?: number; childId?: string },
 ): AppState {
   const entry: LogEntry = { id: newId(), date: new Date().toISOString(), ...e }
   if (!entry.note) delete entry.note

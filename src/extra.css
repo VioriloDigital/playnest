@@ -93,3 +93,50 @@ nav { height: calc(74px + var(--sab)); padding-bottom: var(--sab); }
 .reportReasons { display: grid; gap: 6px; }
 .aboutLinks { display: grid; gap: 10px; }
 .aboutLinks a { color: #0f766e; font-weight: 700; text-decoration: none; padding: 6px 0; }
+
+/* Rewards for children */
+.starsCard { display: flex; align-items: center; gap: 14px; width: 100%; border: 1px solid #ffe7a3; background: linear-gradient(135deg, #fffbe8, #fff1f5); }
+.starsBig { font-size: 28px; font-weight: 900; white-space: nowrap; color: #b45309; }
+.chev { font-size: 28px; color: #94a3b8; }
+.rewardHero { text-align: center; background: linear-gradient(160deg, #fff8dc, #ffe9f0 60%, #e8faf6); border-radius: 28px; padding: 22px 16px 14px; margin: 12px 0; box-shadow: 0 8px 22px #0f172a10; }
+.rhAvatar { font-size: 54px; }
+.rhName { font-size: 22px; font-weight: 900; }
+.rhStars { font-size: 48px; font-weight: 900; color: #b45309; margin: 4px 0; }
+.nextSticker { margin: 12px auto 4px; max-width: 320px; display: grid; gap: 6px; }
+.album { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.sticker { aspect-ratio: 1; border-radius: 18px; background: #eef2f2; display: grid; place-items: center; font-size: 22px; color: #a3b1b1; font-weight: 800; border: 2px dashed #d7e0e0; }
+.sticker.on { background: #fff; border: 2px solid #ffd76a; font-size: 34px; box-shadow: 0 4px 12px #f59e0b22; }
+.overlay { position: fixed; inset: 0; background: #0f172acc; z-index: 50; display: grid; place-items: center; padding: 20px; }
+.stickerShow { background: #fff; border-radius: 28px; padding: 24px 36px; text-align: center; animation: pop .35s ease-out; }
+.bigSticker { font-size: 96px; line-height: 1.1; animation: pop .45s ease-out; }
+@keyframes pop { 0% { transform: scale(.3); opacity: 0 } 70% { transform: scale(1.15) } 100% { transform: scale(1); opacity: 1 } }
+.rewardRow { display: flex; gap: 12px; align-items: center; }
+.rewardRow.ready { border-color: #15bca6; background: #f0fdfa; }
+.rwEmoji { font-size: 36px; }
+.rwActions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.small-btn { padding: 10px 12px !important; font-size: 13px !important; width: auto !important; }
+.emojiPick { display: flex; flex-wrap: wrap; gap: 6px; }
+.emojiPick button { border: 1px solid #e5eeee; background: #fff; border-radius: 12px; font-size: 22px; width: 44px; height: 44px; }
+.emojiPick button.on { border: 2px solid #15bca6; background: #eafbf7; }
+.claimedRow { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
+.claimedRow .small { margin-left: auto; }
+.celebrate { overflow: hidden; }
+.celebrateCard { position: relative; background: #fff; border-radius: 30px; padding: 24px 20px; width: min(92vw, 380px); text-align: center; animation: pop .4s ease-out; }
+.celebrateCard h2 { font-size: 28px; margin: 6px 0; }
+.cBig { font-size: 64px; }
+.cStar { font-size: 34px; font-weight: 900; color: #b45309; }
+.cSticker { margin-top: 12px; padding: 12px; border-radius: 20px; background: #fff8dc; }
+.cReward { margin-top: 12px; padding: 12px; border-radius: 16px; background: #ecfdf5; }
+.confetti span { position: absolute; top: -40px; font-size: 26px; animation: fall 2.6s linear infinite; }
+@keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .celebrateCard, .bigSticker, .stickerShow { animation: none; } }
+.diploma { margin: 16px 0; background: #fffdf6; border: 10px double #f5c242; border-radius: 22px; padding: 28px 18px; text-align: center; }
+.dStickers { font-size: 30px; letter-spacing: 4px; }
+.dTitle { font-size: 40px; font-weight: 900; color: #0f766e; margin-top: 8px; }
+.dSub { font-size: 20px; font-weight: 800; color: #e74778; }
+.dGiven { margin-top: 18px; color: #64748b; }
+.dName { font-size: 36px; font-weight: 900; margin: 6px 0; font-family: Georgia, serif; }
+.dText { font-size: 17px; line-height: 1.5; color: #334155; }
+.dStars { font-size: 22px; margin: 6px 0 14px; }
+.dFooter { display: flex; justify-content: space-between; color: #64748b; font-weight: 700; border-top: 1px solid #f1e3b5; padding-top: 10px; }
+@media print { .diploma { margin: 0; break-inside: avoid; } .celebrate { display: none; } }

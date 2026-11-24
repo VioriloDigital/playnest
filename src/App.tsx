@@ -5,6 +5,7 @@ import { back, canGoBack, go, useRoute } from "./lib/router"
 import { onReminderTap, syncReminders } from "./lib/reminder"
 import { useStore } from "./lib/store"
 import { PlayMode } from "./views/play"
+import { CelebrationOverlay, Diploma, Rewards } from "./views/rewards"
 import { ActivityView, Explore, Favorites, Home, Progress, ProfileEdit, Week } from "./views/core"
 import {
   PlusAI,
@@ -72,6 +73,12 @@ export default function App() {
     case "activity":
       view = <ActivityView id={Number(sub)} />
       break
+    case "rewards":
+      view = <Rewards />
+      break
+    case "diploma":
+      view = <Diploma />
+      break
     case "play":
       view = <PlayMode key={sub} id={Number(sub)} />
       break
@@ -87,7 +94,7 @@ export default function App() {
       view = <Home />
   }
 
-  const navActive = ["activity", "explore", "profile", "play"].includes(root) ? null : root
+  const navActive = ["activity", "explore", "profile", "play", "rewards", "diploma"].includes(root) ? null : root
   const goTab = (to: string) => {
     if (to === root && !sub) return
     // Tabs replace the current entry when nothing is behind it, so Android back leaves the app from a tab.
@@ -123,6 +130,7 @@ export default function App() {
           {toastMsg}
         </div>
       )}
+      <CelebrationOverlay />
       <BackHandler />
     </div>
   )
