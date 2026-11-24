@@ -31,6 +31,8 @@ export interface Activity {
   stepsEn: string[]
   premium: boolean
   tags: string[]
+  /** Created by PlayNest AI (kept on the device in `AppState.aiActivities`). */
+  ai?: boolean
 }
 
 export interface ChildProfile {
@@ -40,6 +42,24 @@ export interface ChildProfile {
 }
 
 export type Rating = "love" | "ok" | "no"
+
+/** One completed activity in the play journal. */
+export interface LogEntry {
+  id: string
+  actId: number
+  /** ISO timestamp of when it was done. */
+  date: string
+  note?: string
+  rating?: Rating
+  /** Set when the entry came from ticking a day in the weekly plan. */
+  weekDay?: number
+}
+
+export interface Reminder {
+  on: boolean
+  /** "HH:MM", 24-hour. */
+  time: string
+}
 
 export interface AppState {
   lang: Lang
@@ -54,6 +74,10 @@ export interface AppState {
   challenge: boolean[]
   snapTags: string[]
   aiHistory: number[]
+  log: LogEntry[]
+  reminder: Reminder
+  /** Activities created by PlayNest AI, newest first. */
+  aiActivities: Activity[]
 }
 
 export const AGES: Age[] = ["1-2", "2-3", "3-4", "4-6", "6-8"]

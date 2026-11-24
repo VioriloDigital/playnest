@@ -26,3 +26,54 @@ header .logo { background: none; border: 0; padding: 0; cursor: pointer; font-fa
 }
 header .logo img { display: block; width: 120px; height: 120px; border-radius: 26px; box-shadow: 0 8px 22px #0f172a14; }
 @media (max-width: 600px) { header .logo img { width: 104px; height: 104px; border-radius: 23px; } }
+
+/* Journal, step-by-step mode, AI */
+header.hidden { display: none; }
+.doneBtn small { font-weight: 700; opacity: .7; }
+.doneSheet { border: 2px solid #15bca6; }
+.noteInput, .fields textarea { width: 100%; min-height: 80px; border: 1px solid #dbe5e5; border-radius: 14px; padding: 12px; font: inherit; resize: vertical; }
+.printFooter { display: none; }
+.streakCard { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, #fff4e5, #ffe9ec); }
+.streakNum { font-size: 40px; font-weight: 900; white-space: nowrap; }
+.bars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 120px; }
+.barCol { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+.bar { width: 70%; min-height: 4px; border-radius: 8px 8px 3px 3px; background: #bfe9e2; }
+.bar.today { background: #15bca6; }
+.barN { font-size: 12px; font-weight: 800; color: #0f766e; min-height: 14px; }
+.journalItem { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #eef2f2; }
+.journalItem:last-of-type { border-bottom: 0; }
+.jEmoji { font-size: 30px; width: 42px; text-align: center; }
+.journalItem .dayBody { flex: 1; }
+.jNote { margin-top: 4px; font-style: italic; color: #455268; line-height: 1.4; }
+.timeFilters { margin-top: -6px; }
+input.toggle { width: 48px; height: 28px; accent-color: #15bca6; }
+.play { padding-top: 12px; }
+.playTop { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 18px; }
+.timerCard { background: #fff; border-radius: 24px; padding: 16px; box-shadow: 0 8px 22px #0f172a10; text-align: center; }
+.timer { font-size: 56px; font-weight: 900; font-variant-numeric: tabular-nums; color: #0f766e; }
+.timer.over { animation: pulse 1s infinite; }
+@keyframes pulse { 50% { transform: scale(1.1); } }
+.timerBtns { display: flex; justify-content: center; gap: 8px; margin: 6px 0 12px; }
+.stepCard { background: #fff; border-radius: 24px; padding: 22px; margin: 14px 0; box-shadow: 0 8px 22px #0f172a10; min-height: 200px; }
+.stepLabel { font-weight: 800; color: #e74778; margin-bottom: 10px; }
+.stepText { font-size: 22px; line-height: 1.5; margin: 0; }
+.matRow { display: flex; gap: 10px; width: 100%; text-align: left; border: 0; background: #f4f8f8; border-radius: 14px; padding: 14px; margin: 6px 0; font-size: 18px; }
+.matRow.on { background: #e6f8f4; }
+.dots { display: flex; justify-content: center; gap: 6px; margin: 8px 0 14px; flex-wrap: wrap; }
+.dots span { width: 8px; height: 8px; border-radius: 50%; background: #d7e3e3; }
+.dots span.past { background: #8fd8cc; }
+.dots span.on { background: #15bca6; width: 22px; border-radius: 4px; }
+.playNav button:disabled { opacity: .4; }
+.aiBadge { display: inline-block; background: #efe7ff; color: #6b3fd1; font-weight: 800; border-radius: 999px; padding: 6px 10px; font-size: 12px; margin-left: 6px; }
+.aiError { background: #fff1f1; border: 1px solid #ffd2d2; border-radius: 14px; padding: 12px; margin-top: 12px; }
+.loading { text-align: center; padding: 24px; font-weight: 700; color: #0f766e; }
+.loading .spin { display: inline-block; animation: spin 1.2s linear infinite; font-size: 30px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media print {
+  .printFooter { display: block; text-align: center; margin-top: 16px; color: #64748b; font-weight: 700; }
+  .doneSheet { display: none; }
+}
+.miniActions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+.miniActions button { border: 0; background: #fff; border-radius: 16px; padding: 10px 4px; font-size: 12px; font-weight: 700; color: #334155; box-shadow: 0 4px 12px #0f172a0c; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.miniActions button span { font-size: 22px; }
+.activity-card + .grid2, .doneSheet { margin-top: 12px; }

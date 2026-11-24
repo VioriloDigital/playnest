@@ -12,8 +12,9 @@ import {
 } from "../lib/activities"
 import { actText, pick2 } from "../lib/i18n"
 import { go } from "../lib/router"
+import { aiActivity, AIError, aiErrorText, aiSnap, photoToJpeg } from "../lib/ai"
 import { useStore } from "../lib/store"
-import { AGES, MAX_PROFILES, type ActType, type Activity, type Age, type Place } from "../lib/types"
+import { AGES, MAX_PROFILES, type ActType, type Activity, type Age, type AppState, type Place } from "../lib/types"
 
 export function PlusHome() {
   const { state, profile } = useStore()
@@ -87,7 +88,7 @@ function ResultCard({ a, onAgain, note }: { a: Activity; onAgain?: () => void; n
   return (
     <div className="resultCard">
       <div className="bigEmoji">{a.emoji}</div>
-      <span className="plusBadge">{a.premium ? "PLUS" : "SMART PICK"}</span>
+      {a.ai ? <span className="aiBadge">✨ PlayNest AI</span> : <span className="plusBadge">{a.premium ? "PLUS" : "SMART PICK"}</span>}
       <h2>{actText.title(a, l)}</h2>
       <p>{actText.desc(a, l)}</p>
       {note && <p className="small">{note}</p>}
@@ -103,6 +104,24 @@ function ResultCard({ a, onAgain, note }: { a: Activity; onAgain?: () => void; n
   )
 }
 
+function Loading({ text }: { text: string }) {
+  return (
+    <div className="loading" role="status">
+      <span className="spin">✨</span>
+      <div>{text}</div>
+    </div>
+  )
+}
+
+/** Keeps AI-created activities on the device (newest first, at most 50) so they can be reopened. */
+function saveAI(list: Activity[]) {
+  return (s: AppState): AppState => ({
+    ...s,
+    aiActivities: [...list, ...s.aiActivities].slice(0, 50),
+    aiHistory: [...list.map((a) => a.id), ...s.aiHistory].slice(0, 10),
+  })
+}
+
 export function PlusAI() {
   const { state, update, profile } = useStore()
   const l = state.lang
@@ -113,14 +132,28 @@ export function PlusAI() {
   const [type, setType] = useState<ActType | "all">("all")
   const [mats, setMats] = useState("")
   const [result, setResult] = useState<Activity | null>(null)
-  const generate = () => {
-    const a = smartPick({ age, time, place, type, exclude: result ? [result.id] : [] })
-    setResult(a)
-    update((s) => ({ ...s, aiHistory: [a.id, ...s.aiHistory].slice(0, 10) }))
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  const generate = async () => {
+    setBusy(true)
+    setErr(null)
+    try {
+      const avoid = state.aiActivities.slice(0, 8).map((a) => a.titleEn)
+      const a = await aiActivity({ lang: l, age, time, place, type, materials: mats.trim() || undefined, avoid })
+      update(saveAI([a]))
+      setResult(a)
+    } catch (e) {
+      const kind = e instanceof AIError ? e.kind : "failed"
+      setErr(aiErrorText(kind, l))
+      // Still give the parent something to do right now.
+      if (kind !== "refused" && kind !== "busy") setResult(smartPick({ age, time, place, type, exclude: result ? [result.id] : [] }))
+    } finally {
+      setBusy(false)
+    }
   }
   return (
     <>
-      <PlusHead icon="🤖" title="PlayNest AI" sub={p("Έξυπνος δημιουργός δραστηριοτήτων", "Smart activity creator")} />
+      <PlusHead icon="🤖" title="PlayNest AI" sub={p("Νέες δραστηριότητες, φτιαγμένες για εσάς", "New activities, made for you")} />
       <div className="plusPanel">
         <div className="plusForm">
           <label>
@@ -161,48 +194,80 @@ export function PlusAI() {
             </select>
           </label>
           <label>
-            {p("Υλικά που έχεις (προαιρετικά)", "Materials you have (optional)")}
+            {p("Τι έχεις διαθέσιμο; (προαιρετικά)", "What do you have? (optional)")}
             <textarea
               value={mats}
+              maxLength={300}
               onChange={(e) => setMats(e.target.value)}
-              placeholder={p("π.χ. χαρτί, μαρκαδόροι, κουτί", "e.g. paper, markers, box")}
+              placeholder={p("π.χ. ένα χαρτόκουτο, μαρκαδόροι και μανταλάκια", "e.g. a cardboard box, markers and clothes pegs")}
             />
           </label>
-          <button className="primary" onClick={generate}>
+          <button className="primary" onClick={generate} disabled={busy}>
             ✨ {p("Δημιούργησέ το", "Create it")}
           </button>
         </div>
-        {result && (
-          <ResultCard
-            a={result}
-            onAgain={generate}
-            note={mats.trim() ? `${p("Με βάση όσα έχεις:", "Using what you have:")} ${mats.trim()}` : undefined}
-          />
+        {busy && <Loading text={p("Το PlayNest AI σκέφτεται μια ιδέα…", "PlayNest AI is thinking of an idea…")} />}
+        {err && !busy && <div className="aiError">{err}</div>}
+        {result && !busy && (
+          <div ref={(el) => el?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+            <ResultCard key={result.id} a={result} onAgain={generate} />
+          </div>
         )}
       </div>
+      {state.aiActivities.length > 0 && (
+        <>
+          <SectionTitle>📚 {p("Οι δραστηριότητές σου από το AI", "Your AI activities")}</SectionTitle>
+          <div className="recGrid">
+            {state.aiActivities.slice(0, 12).map((a) => (
+              <RecCard key={a.id} a={a} />
+            ))}
+          </div>
+        </>
+      )}
     </>
   )
 }
 
 export function PlusSnap() {
-  const { state, update } = useStore()
+  const { state, update, profile } = useStore()
   const l = state.lang
   const p = (gr: string, en: string) => pick2(l, gr, en)
   const [img, setImg] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  const [seen, setSeen] = useState<string[] | null>(null)
   const [results, setResults] = useState<Activity[]>([])
   const toggle = (k: string) =>
     update((s) => ({
       ...s,
       snapTags: s.snapTags.includes(k) ? s.snapTags.filter((x) => x !== k) : [...s.snapTags, k],
     }))
+  const analyse = async () => {
+    if (!file) return
+    setBusy(true)
+    setErr(null)
+    setSeen(null)
+    try {
+      const r = await aiSnap({ lang: l, age: profile.age, image: await photoToJpeg(file) })
+      setSeen(r.materials)
+      setResults(r.activities)
+      if (r.activities.length) update(saveAI(r.activities))
+      else setErr(p("Δεν βρήκα κάτι για παιχνίδι στη φωτογραφία. Δοκίμασε άλλη ή διάλεξε υλικά από κάτω.", "I found nothing to play with in the photo. Try another or pick materials below."))
+    } catch (e) {
+      setErr(aiErrorText(e instanceof AIError ? e.kind : "failed", l, "manual"))
+    } finally {
+      setBusy(false)
+    }
+  }
   return (
     <>
       <PlusHead icon="📸" title="Snap & Play" sub={p("Φωτογραφία → ιδέες παιχνιδιού", "Photo → play ideas")} />
       <div className="plusPanel">
         <p>
           {p(
-            "Βγάλε ή διάλεξε φωτογραφία με τα αντικείμενα που έχεις διαθέσιμα.",
-            "Take or choose a photo of the objects you have available.",
+            "Βγάλε ή διάλεξε φωτογραφία με τα αντικείμενα που έχεις διαθέσιμα. Το PlayNest AI θα τα αναγνωρίσει και θα σου προτείνει παιχνίδια.",
+            "Take or choose a photo of the things you have. PlayNest AI will recognise them and suggest games.",
           )}
         </p>
         <input
@@ -215,17 +280,37 @@ export function PlusSnap() {
             if (!f) return
             if (img) URL.revokeObjectURL(img)
             setImg(URL.createObjectURL(f))
+            setFile(f)
+            setResults([])
+            setSeen(null)
           }}
         />
         {img && <img src={img} className="snapPreview" style={{ display: "block" }} alt="" />}
+        {file && (
+          <button className="primary" style={{ marginTop: 12 }} onClick={analyse} disabled={busy}>
+            ✨ {p("Βρες παιχνίδια από τη φωτογραφία", "Find games from the photo")}
+          </button>
+        )}
         <div className="noticeAI" style={{ marginTop: 10 }}>
-          🤖{" "}
+          🔒{" "}
           {p(
-            "Σε αυτή την έκδοση επιλέγεις εσύ τα υλικά που βλέπεις στη φωτογραφία. Η αυτόματη αναγνώριση εικόνας θα έρθει σε επόμενη έκδοση. Η φωτογραφία μένει μόνο στη συσκευή σου.",
-            "In this version you select the materials you see in the photo. Automatic image recognition will come in a later version. The photo stays on your device.",
+            "Η φωτογραφία στέλνεται μόνο για την αναγνώριση και δεν αποθηκεύεται. Μη φωτογραφίζεις πρόσωπα.",
+            "The photo is sent only for recognition and is not stored. Please don't photograph faces.",
           )}
         </div>
-        <h3 style={{ marginTop: 16 }}>{p("Τι βλέπεις στη φωτογραφία;", "What is in the photo?")}</h3>
+        {busy && <Loading text={p("Κοιτάζω τη φωτογραφία…", "Looking at the photo…")} />}
+        {err && !busy && <div className="aiError">{err}</div>}
+        {seen && seen.length > 0 && !busy && (
+          <p className="small">
+            <b>{p("Βλέπω:", "I see:")}</b> {seen.join(", ")}
+          </p>
+        )}
+        {results.map((a) => (
+          <ResultCard key={a.id} a={a} />
+        ))}
+      </div>
+      <div className="plusPanel">
+        <h3>{p("…ή διάλεξε τα υλικά μόνος σου", "…or pick the materials yourself")}</h3>
         <div className="plusChips">
           {SNAP_ITEMS.map((s) => (
             <button
@@ -238,23 +323,8 @@ export function PlusSnap() {
           ))}
         </div>
         <button className="primary" style={{ marginTop: 14 }} onClick={() => setResults(snapSuggest(state.snapTags))}>
-          ✨ {p("Βρες παιχνίδια", "Find games")}
+          🔎 {p("Βρες από τη βιβλιοθήκη", "Find in the library")}
         </button>
-        {results.length > 0 && (
-          <>
-            <SectionTitle>{p("3 ιδέες τώρα", "3 ideas now")}</SectionTitle>
-            {results.map((a) => (
-              <button key={a.id} className="resultCard" onClick={() => openActivity(a.id)}>
-                <b>
-                  {a.emoji} {actText.title(a, l)}
-                </b>
-                <div className="small">
-                  {a.times[0]}' · {a.ages.join(", ")}
-                </div>
-              </button>
-            ))}
-          </>
-        )}
       </div>
     </>
   )

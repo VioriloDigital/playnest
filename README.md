@@ -6,39 +6,42 @@
 
 ## Λειτουργίες
 - **Αρχική:** «Βρες μου κάτι τώρα», γρήγορες περιστάσεις (βροχή, 10 λεπτά, αυτοκίνητο…), δραστηριότητα της ημέρας, προφίλ παιδιού.
-- **Explore:** όλες οι 200 δραστηριότητες με 13 κατηγορίες και αναζήτηση (χωρίς τόνους, ελληνικά/αγγλικά).
-- **Δραστηριότητα:** αγαπημένο, αξιολόγηση (❤️ 😐 👎), κοινοποίηση και εκτύπωση.
-- **Εβδομάδα:** ισορροπημένο πρόγραμμα 7 ημερών χωρίς επαναλήψεις, αλλαγή ημέρας, σημείωση ολοκλήρωσης.
-- **Πρόοδος:** μετρητές και σήματα που ξεκλειδώνονται.
-- **Plus (preview, χωρίς χρεώσεις):** PlayNest AI, Snap & Play, έως 3 προφίλ και Sibling Mode, Premium Packs, 7-Day Challenge, Advanced Progress, Printables.
+- **Explore:** όλες οι 200 δραστηριότητες με 13 κατηγορίες, φίλτρο διάρκειας και αναζήτηση σε τίτλους και υλικά (χωρίς τόνους).
+- **Δραστηριότητα:** «▶️ Ξεκινάμε!» (βήμα-βήμα με μεγάλα γράμματα, λίστα υλικών και χρονόμετρο, η οθόνη μένει αναμμένη), «✅ Το κάναμε!» με αξιολόγηση και σημείωση, αγαπημένο, κοινοποίηση, εκτύπωση.
+- **Εβδομάδα:** ισορροπημένο πρόγραμμα 7 ημερών χωρίς επαναλήψεις. Το ✅ μιας ημέρας γράφεται και στο ημερολόγιο.
+- **Πρόοδος:** σερί ημερών, γράφημα 7 ημερών, 10 σήματα και ημερολόγιο παιχνιδιού με τις σημειώσεις.
+- **Υπενθύμιση (Android/iOS):** καθημερινή ειδοποίηση με την ιδέα της ημέρας, σε ώρα που διαλέγει ο γονιός (Προφίλ → Καθημερινή υπενθύμιση).
+- **Plus (preview, χωρίς χρεώσεις):**
+  - **PlayNest AI:** φτιάχνει νέα δραστηριότητα (ελληνικά και αγγλικά) με Claude Opus 5.5, από ηλικία, χρόνο, χώρο και όσα έχει ο γονιός. Οι δραστηριότητες του AI μένουν στη συσκευή.
+  - **Snap & Play:** αναγνωρίζει τα αντικείμενα μιας φωτογραφίας και προτείνει 2 παιχνίδια. Η φωτογραφία μικραίνει στη συσκευή και δεν αποθηκεύεται.
+  - Έως 3 προφίλ και Sibling Mode, Premium Packs, 7-Day Challenge, Advanced Progress, Printables.
+- **Offline (web):** service worker κρατά την εφαρμογή διαθέσιμη χωρίς internet (εκτός από το AI).
 
 Τα δεδομένα μένουν μόνο στη συσκευή (`localStorage`, κλειδί `playnest_state_v3`). Τα δεδομένα της V1 (`pn_*`, `playnest_plus_v2`) μεταφέρονται αυτόματα στο πρώτο άνοιγμα στον ίδιο browser.
 
-Δεν υπάρχουν ακόμη λογαριασμοί, πραγματικό AI/αναγνώριση εικόνας ή συνδρομές.
+## PlayNest AI
+- Endpoints στον Worker: `POST /api/ai/activity` και `POST /api/ai/snap` (`worker/ai.ts`). Μοντέλο `claude-opus-5-5`, effort `low` για γρήγορη απάντηση, structured outputs και `fallbacks: "default"` σε περίπτωση άρνησης.
+- **Κλειδί:** secret `ANTHROPIC_API_KEY` στον worker `playnest` (Cloudflare → Workers & Pages → playnest → Settings → Variables and Secrets). Χωρίς αυτό, η εφαρμογή δείχνει μήνυμα και προτείνει δραστηριότητα από τη βιβλιοθήκη.
+- **Όρια:** `AI_DAILY_PER_DEVICE` (10 ανά συσκευή/ημέρα, ×3 ανά IP) και `AI_DAILY_TOTAL` (300 συνολικά/ημέρα), στο `wrangler.jsonc`. Μετρητές στο KV `playnest-ai-usage`.
 
 ## Ανάπτυξη
 ```bash
 pnpm install
 pnpm dev            # http://localhost:5173
 pnpm build          # έλεγχος τύπων + build στο dist/
-pnpm deploy:web     # Cloudflare Workers (static assets) → https://playnest.kosbouris.workers.dev
+pnpm deploy:web     # build + Worker στο Cloudflare → https://playnest.kosbouris.workers.dev
 pnpm cap:sync       # build + αντιγραφή στο android/ και ios/
 pnpm android:apk    # debug APK (χρειάζεται Android SDK, JDK 21)
 ```
 
 ## Δομή
 - `src/data/activities.json`: οι 200 δραστηριότητες
-- `src/lib/`: τύποι, μεταφράσεις, επιλογή δραστηριοτήτων, αποθήκευση/μεταφορά δεδομένων, routing (`#/…`)
-- `src/views/`: οθόνες (`core.tsx`, `plus.tsx`)
+- `src/lib/`: τύποι, μεταφράσεις, επιλογή δραστηριοτήτων, ημερολόγιο/σερί, υπενθυμίσεις, AI client, αποθήκευση/μεταφορά δεδομένων, routing (`#/…`)
+- `src/views/`: οθόνες (`core.tsx`, `play.tsx`, `plus.tsx`)
+- `worker/`: Cloudflare Worker: σερβίρει την εφαρμογή (από `dist-worker/files.js`, που φτιάχνει το `scripts/embed-worker.mjs`) και το API του AI
 - `android/`, `ios/`: projects του Capacitor (`gr.playnest.app`)
 
 ## CI
 - `.github/workflows/android.yml`: debug APK σε κάθε push στο `main` (artifact `PlayNest-APK`)
 - `.github/workflows/ios.yml`: build για iOS Simulator
 - `.github/workflows/deploy-web.yml`: χειροκίνητο deploy στο Cloudflare (secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`)
-
-## Deploy χωρίς static-assets upload
-Αν το upload των assets του Wrangler αποτύχει (π.χ. πίσω από proxy που αλλάζει το `Authorization`), το `scripts/embed-worker.mjs` βάζει όλο το `dist/` μέσα σε ένα Worker:
-```bash
-pnpm build && node scripts/embed-worker.mjs && wrangler deploy -c wrangler.embedded.jsonc
-```

@@ -1,7 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "playnest",
-  "account_id": "eea9b01d768c47bcb3798afa3376c968",
-  "main": "dist-worker/worker.js",
-  "compatibility_date": "2026-05-15"
-}

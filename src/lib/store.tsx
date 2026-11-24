@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import type { ReactNode } from "react"
+import { registerCustom } from "./activities"
 import { AGES, type AppState, type ChildProfile, type Lang } from "./types"
 
 const KEY = "playnest_state_v3"
@@ -32,6 +33,9 @@ export const defaultState: AppState = {
   challenge: [false, false, false, false, false, false, false],
   snapTags: [],
   aiHistory: [],
+  log: [],
+  reminder: { on: false, time: "17:30" },
+  aiActivities: [],
 }
 
 /** Load state, migrating data saved by PlayNest V1 (pn_* keys and playnest_plus_v2). */
@@ -39,9 +43,16 @@ export function loadState(): AppState {
   const saved = read<Partial<AppState> | null>(KEY, null)
   if (saved) {
     const profiles = (saved.profiles?.length ? saved.profiles : defaultState.profiles).map(cleanProfile)
+    // Before the journal existed, completed days only lived in `done`: turn them into entries once.
+    const log =
+      saved.log ??
+      (saved.done ?? [])
+        .filter((i) => typeof saved.week?.[i] === "number")
+        .map((i) => ({ id: `w${i}`, actId: saved.week![i], date: new Date().toISOString(), weekDay: i }))
     return {
       ...defaultState,
       ...saved,
+      log,
       profiles,
       active: Math.min(Math.max(saved.active ?? 0, 0), profiles.length - 1),
     }
@@ -79,6 +90,9 @@ export function loadState(): AppState {
     favs: read<number[]>("pn_favs", read<number[]>("playnest-favs", [])),
     week: read<number[]>("pn_week", []),
     done: read<number[]>("pn_done", []),
+    log: read<number[]>("pn_done", [])
+      .filter((i) => typeof read<number[]>("pn_week", [])[i] === "number")
+      .map((i) => ({ id: `w${i}`, actId: read<number[]>("pn_week", [])[i], date: new Date().toISOString(), weekDay: i })),
     challenge: plus?.challenge?.length === 7 ? plus.challenge : defaultState.challenge,
     snapTags: plus?.snapTags ?? [],
     aiHistory: plus?.aiHistory ?? [],
@@ -100,6 +114,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [toastMsg, setToastMsg] = useState<string | null>(null)
   const timer = useRef<number | undefined>(undefined)
 
+  registerCustom(state.aiActivities)
   useEffect(() => {
     try {
       localStorage.setItem(KEY, JSON.stringify(state))
