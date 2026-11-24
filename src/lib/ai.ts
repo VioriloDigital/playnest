@@ -104,6 +104,14 @@ export async function aiSnap(req: { lang: Lang; age: Age; image: string }): Prom
   }
 }
 
+/** Sends an AI activity the parent flagged, with the chosen reason. */
+export async function reportActivity(a: Activity, reason: string): Promise<void> {
+  await call<{ ok: boolean }>("report", {
+    reason,
+    activity: { emoji: a.emoji, titleEl: a.titleEl, titleEn: a.titleEn, descEl: a.descEl, stepsEl: a.stepsEl, materialsEl: a.materialsEl, ages: a.ages },
+  })
+}
+
 /** `fallback` describes what the screen offers instead (a library pick, or picking materials by hand). */
 export function aiErrorText(kind: AIErrorKind, lang: Lang, fallback: "library" | "manual" = "library"): string {
   const el: Record<AIErrorKind, string> = {

@@ -13,6 +13,7 @@ import {
 } from "../lib/activities"
 import { actText, DAYS, greeting, label, PLACE_LABEL, pick2, t, TYPE_LABEL } from "../lib/i18n"
 import { addEntry, BADGES, dayKey, removeEntry, stats } from "../lib/journal"
+import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
 import { back, go } from "../lib/router"
 import { useStore } from "../lib/store"
@@ -251,8 +252,63 @@ export function ActivityView({ id }: { id: number }) {
           {pick2(l, "Εκτύπωση", "Print")}
         </button>
       </div>
+      {a.ai && <ReportAI a={a} />}
       <div className="printFooter">PlayNest · {pick2(l, "Ιδέες παιχνιδιού για κάθε στιγμή", "Play ideas for every moment")}</div>
     </>
+  )
+}
+
+const REPORT_REASONS: [string, string, string][] = [
+  ["unsafe", "⚠️ Μη ασφαλές για την ηλικία", "⚠️ Unsafe for the age"],
+  ["inappropriate", "🚫 Ακατάλληλο περιεχόμενο", "🚫 Inappropriate content"],
+  ["wrong", "❓ Λάθος ή ακατανόητο", "❓ Wrong or confusing"],
+]
+
+/** Lets parents flag an AI-generated activity (required for AI content on Google Play). */
+function ReportAI({ a }: { a: Activity }) {
+  const { state, toast } = useStore()
+  const l = state.lang
+  const [open, setOpen] = useState(false)
+  const [sent, setSent] = useState(false)
+  const send = async (reason: string) => {
+    setOpen(false)
+    try {
+      await reportActivity(a, reason)
+      setSent(true)
+      toast(pick2(l, "Ευχαριστούμε! Η αναφορά στάλθηκε.", "Thank you! The report was sent."))
+    } catch {
+      toast(pick2(l, "Δεν στάλθηκε. Δοκίμασε ξανά με σύνδεση στο internet.", "Not sent. Try again when online."))
+    }
+  }
+  return (
+    <div className="card2 noprint reportBox">
+      <p className="small">
+        ✨{" "}
+        {pick2(
+          l,
+          "Τη δημιούργησε το PlayNest AI. Ελέγξτε την πριν την κάνετε και να είστε πάντα κοντά στο παιδί.",
+          "Created by PlayNest AI. Check it before you start and always stay close to the child.",
+        )}
+      </p>
+      {sent ? (
+        <p className="small">✅ {pick2(l, "Η αναφορά στάλθηκε.", "Report sent.")}</p>
+      ) : open ? (
+        <div className="reportReasons">
+          {REPORT_REASONS.map(([k, gr, en]) => (
+            <button key={k} className="soft" onClick={() => send(k)}>
+              {l === "el" ? gr : en}
+            </button>
+          ))}
+          <button className="soft" onClick={() => setOpen(false)}>
+            {pick2(l, "Άκυρο", "Cancel")}
+          </button>
+        </div>
+      ) : (
+        <button className="soft" onClick={() => setOpen(true)}>
+          🚩 {pick2(l, "Αναφορά δραστηριότητας", "Report this activity")}
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -527,6 +583,32 @@ export function ProfileEdit() {
         </button>
       </div>
       <ReminderSettings />
+      <About />
+    </>
+  )
+}
+
+const SITE = "https://playnest.kosbouris.workers.dev"
+
+function About() {
+  const { state } = useStore()
+  const l = state.lang
+  return (
+    <>
+      <SectionTitle>ℹ️ {pick2(l, "Σχετικά", "About")}</SectionTitle>
+      <div className="card2 aboutLinks">
+        <a href={`${SITE}/privacy.html`} target="_blank" rel="noopener">
+          🔒 {pick2(l, "Πολιτική απορρήτου", "Privacy policy")}
+        </a>
+        <a href={`${SITE}/terms.html`} target="_blank" rel="noopener">
+          📄 {pick2(l, "Όροι χρήσης", "Terms of use")}
+        </a>
+        <a href="mailto:info@viorilo.gr">✉️ info@viorilo.gr</a>
+        <p className="small">
+          PlayNest 2.0 · Viorilo Digital ·{" "}
+          {pick2(l, "Τα δεδομένα σου μένουν μόνο σε αυτή τη συσκευή.", "Your data stays on this device only.")}
+        </p>
+      </div>
     </>
   )
 }
