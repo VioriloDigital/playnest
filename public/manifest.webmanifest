@@ -1,0 +1,10 @@
+{
+  "name": "PlayNest",
+  "short_name": "PlayNest",
+  "description": "Ιδέες παιχνιδιού για παιδιά 1–8 ετών",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fffaf6",
+  "theme_color": "#18b9a5",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
