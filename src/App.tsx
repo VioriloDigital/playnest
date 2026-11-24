@@ -2,7 +2,9 @@ import { useEffect } from "react"
 import logo from "./logo.png"
 import { t, type TKey } from "./lib/i18n"
 import { back, canGoBack, go, useRoute } from "./lib/router"
+import { onReminderTap, syncReminders } from "./lib/reminder"
 import { useStore } from "./lib/store"
+import { PlayMode } from "./views/play"
 import { ActivityView, Explore, Favorites, Home, Progress, ProfileEdit, Week } from "./views/core"
 import {
   PlusAI,
@@ -39,8 +41,15 @@ export default function App() {
   const l = state.lang
   const [root = "", sub] = path
 
+  // Keep the rolling two-week reminder window filled, and open the activity a reminder names.
   useEffect(() => {
-    document.title = "PlayNest"
+    syncReminders(state.reminder, state.lang).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.lang])
+  useEffect(() => {
+    let off: (() => void) | undefined
+    onReminderTap((id) => go(`activity/${id}`)).then((f) => (off = f))
+    return () => off?.()
   }, [])
 
   let view: React.JSX.Element
@@ -63,6 +72,9 @@ export default function App() {
     case "activity":
       view = <ActivityView id={Number(sub)} />
       break
+    case "play":
+      view = <PlayMode key={sub} id={Number(sub)} />
+      break
     case "explore":
       view = <Explore initialCat={query.get("cat") ?? "all"} />
       break
@@ -75,7 +87,7 @@ export default function App() {
       view = <Home />
   }
 
-  const navActive = root === "activity" || root === "explore" || root === "profile" ? null : root
+  const navActive = ["activity", "explore", "profile", "play"].includes(root) ? null : root
   const goTab = (to: string) => {
     if (to === root && !sub) return
     // Tabs replace the current entry when nothing is behind it, so Android back leaves the app from a tab.
@@ -84,7 +96,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="noprint">
+      <header className={`noprint ${root === "play" ? "hidden" : ""}`}>
         <button className="logo" onClick={() => goTab("")} aria-label="PlayNest">
           <img src={logo} alt="PlayNest" width={120} height={120} />
         </button>

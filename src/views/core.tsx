@@ -12,9 +12,11 @@ import {
   type QuickKey,
 } from "../lib/activities"
 import { actText, DAYS, greeting, label, PLACE_LABEL, pick2, t, TYPE_LABEL } from "../lib/i18n"
+import { addEntry, BADGES, dayKey, removeEntry, stats } from "../lib/journal"
+import { remindersSupported, syncReminders } from "../lib/reminder"
 import { back, go } from "../lib/router"
 import { useStore } from "../lib/store"
-import { AGES, INTERESTS, type ActType, type Activity, type Age, type Interest, type Rating } from "../lib/types"
+import { AGES, INTERESTS, type ActType, type Activity, type Age, type Interest, type LogEntry, type Rating } from "../lib/types"
 
 export function ProfileCard() {
   const { state, profile } = useStore()
@@ -116,9 +118,15 @@ export function ActivityView({ id }: { id: number }) {
   const rating = state.ratings[a.id]
   const toggleFav = () =>
     update((s) => ({ ...s, favs: fav ? s.favs.filter((x) => x !== a.id) : [...s.favs, a.id] }))
-  const rate = (r: Rating) => {
-    update((s) => ({ ...s, ratings: { ...s.ratings, [a.id]: r } }))
-    toast(t(l, "saved"))
+  const [doneOpen, setDoneOpen] = useState(false)
+  const [note, setNote] = useState("")
+  const [doneRating, setDoneRating] = useState<Rating | undefined>(rating)
+  const timesDone = state.log.filter((e) => e.actId === a.id).length
+  const saveDone = () => {
+    update((s) => addEntry(s, { actId: a.id, note: note.trim(), rating: doneRating }))
+    setDoneOpen(false)
+    setNote("")
+    toast(pick2(l, "Μπράβο! Καταγράφηκε στο ημερολόγιο 🎉", "Well done! Added to your journal 🎉"))
   }
   const share = async () => {
     const text = activityText(a, l)
@@ -182,39 +190,68 @@ export function ActivityView({ id }: { id: number }) {
         </ol>
       </section>
       <div className="grid2 noprint">
-        <button className="secondary" onClick={toggleFav}>
-          {fav ? "❤️" : "🤍"} {t(l, "fav")}
+        <button className="primary" onClick={() => go(`play/${a.id}`)}>
+          ▶️ {pick2(l, "Ξεκινάμε!", "Let’s play!")}
         </button>
-        <button
-          className="primary"
-          onClick={() => go(`activity/${pickActivity({ age: profile.age, exclude: [a.id] }).id}`, true)}
-        >
-          🔄 {t(l, "another")}
+        <button className="secondary doneBtn" onClick={() => setDoneOpen(true)}>
+          ✅ {pick2(l, "Το κάναμε!", "We did it!")}
+          {timesDone > 0 && <small> ×{timesDone}</small>}
         </button>
       </div>
-      <div className="grid2 noprint" style={{ marginTop: 10 }}>
-        <button className="secondary" onClick={share}>
-          {t(l, "share")}
-        </button>
-        <button className="secondary" onClick={() => window.print()}>
-          {t(l, "print")}
-        </button>
-      </div>
-      <div className="card2 noprint">
-        <h2>{t(l, "liked")}</h2>
-        <div className="rating">
-          {RATINGS.map(([r, icon]) => (
-            <button
-              key={r}
-              className={`soft ${rating === r ? "sel" : ""}`}
-              aria-pressed={rating === r}
-              onClick={() => rate(r)}
-            >
-              {icon}
+      {doneOpen && (
+        <div className="card2 noprint doneSheet">
+          <h2>{t(l, "liked")}</h2>
+          <div className="rating">
+            {RATINGS.map(([r, icon]) => (
+              <button
+                key={r}
+                className={`soft ${doneRating === r ? "sel" : ""}`}
+                aria-pressed={doneRating === r}
+                onClick={() => setDoneRating(r)}
+              >
+                {icon}
+              </button>
+            ))}
+          </div>
+          <label className="fields" style={{ marginTop: 12 }}>
+            {pick2(l, "Μια σημείωση ή ανάμνηση (προαιρετικά)", "A note or memory (optional)")}
+            <textarea
+              className="noteInput"
+              value={note}
+              maxLength={400}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={pick2(l, "π.χ. Γέλασε πολύ με το κόκκινο χρώμα!", "e.g. Loved finding red things!")}
+            />
+          </label>
+          <div className="grid2" style={{ marginTop: 10 }}>
+            <button className="secondary" onClick={() => setDoneOpen(false)}>
+              {pick2(l, "Άκυρο", "Cancel")}
             </button>
-          ))}
+            <button className="primary" onClick={saveDone}>
+              {t(l, "save")}
+            </button>
+          </div>
         </div>
+      )}
+      <div className="miniActions noprint">
+        <button onClick={toggleFav} aria-pressed={fav}>
+          <span>{fav ? "❤️" : "🤍"}</span>
+          {t(l, "fav")}
+        </button>
+        <button onClick={() => go(`activity/${pickActivity({ age: profile.age, exclude: [a.id] }).id}`, true)}>
+          <span>🔄</span>
+          {pick2(l, "Άλλη", "Another")}
+        </button>
+        <button onClick={share}>
+          <span>📤</span>
+          {pick2(l, "Κοινοποίηση", "Share")}
+        </button>
+        <button onClick={() => window.print()}>
+          <span>🖨️</span>
+          {pick2(l, "Εκτύπωση", "Print")}
+        </button>
       </div>
+      <div className="printFooter">PlayNest · {pick2(l, "Ιδέες παιχνιδιού για κάθε στιγμή", "Play ideas for every moment")}</div>
     </>
   )
 }
@@ -223,17 +260,31 @@ export function Week() {
   const { state, update, profile, toast } = useStore()
   const l = state.lang
   const generate = () => {
-    update((s) => ({ ...s, week: buildWeek(profile.age), done: [] }))
+    // Journal entries stay; only the link to the old plan's days is dropped.
+    update((s) => ({
+      ...s,
+      week: buildWeek(profile.age),
+      done: [],
+      log: s.log.map(({ weekDay: _w, ...e }) => e),
+    }))
     toast(t(l, "weekReady"))
   }
   const swap = (i: number) =>
     update((s) => {
       const week = [...s.week]
       week[i] = pickActivity({ age: profile.age, exclude: s.week }).id
-      return { ...s, week, done: s.done.filter((x) => x !== i) }
+      const log = s.log.map((e) => (e.weekDay === i ? { ...e, weekDay: undefined } : e))
+      return { ...s, week, log, done: s.done.filter((x) => x !== i) }
     })
   const mark = (i: number) =>
-    update((s) => ({ ...s, done: s.done.includes(i) ? s.done.filter((x) => x !== i) : [...s.done, i] }))
+    update((s) => {
+      if (s.done.includes(i)) {
+        const entry = s.log.find((e) => e.weekDay === i && e.actId === s.week[i])
+        const next = entry ? removeEntry(s, entry.id) : s
+        return { ...next, done: s.done.filter((x) => x !== i) }
+      }
+      return { ...addEntry(s, { actId: s.week[i], weekDay: i }), done: [...s.done, i] }
+    })
   return (
     <>
       <SectionTitle badge="PLUS">{t(l, "planner")}</SectionTitle>
@@ -295,60 +346,136 @@ export function Favorites() {
   )
 }
 
+function JournalItem({ e }: { e: LogEntry }) {
+  const { state, update } = useStore()
+  const l = state.lang
+  const a = getActivity(e.actId)
+  const d = new Date(e.date)
+  const when = d.toLocaleDateString(l === "el" ? "el-GR" : "en-GB", { weekday: "short", day: "numeric", month: "short" })
+  const remove = () => {
+    if (!confirm(pick2(l, "Διαγραφή από το ημερολόγιο;", "Remove from the journal?"))) return
+    update((s) => {
+      const next = removeEntry(s, e.id)
+      return e.weekDay !== undefined ? { ...next, done: next.done.filter((x) => x !== e.weekDay) } : next
+    })
+  }
+  return (
+    <div className="journalItem">
+      <div className="jEmoji">{a?.emoji ?? "🎈"}</div>
+      <button className="dayBody" onClick={() => a && openActivity(a.id)}>
+        <b>{a ? actText.title(a, l) : "—"}</b>
+        <div className="small">
+          {when}
+          {e.rating && ` · ${{ love: "❤️", ok: "😐", no: "👎" }[e.rating]}`}
+        </div>
+        {e.note && <div className="jNote">“{e.note}”</div>}
+      </button>
+      <button className="iconbtn" aria-label="delete" onClick={remove}>
+        🗑️
+      </button>
+    </div>
+  )
+}
+
 export function Progress() {
   const { state } = useStore()
   const l = state.lang
-  const doneActs = state.done.map((i) => getActivity(state.week[i])).filter((a): a is Activity => !!a)
-  const c = doneActs.length
-  const cr = doneActs.filter((a) => a.types.includes("creative")).length
-  const mv = doneActs.filter((a) => a.types.includes("movement")).length
-  const outdoor = doneActs.filter((a) => a.places.includes("outside")).length
-  const badges = [
-    { on: c >= 1, text: pick2(l, "🌟 Μικρός εξερευνητής", "🌟 Little Explorer") },
-    { on: cr >= 2, text: pick2(l, "🎨 Δημιουργική εβδομάδα", "🎨 Creative Week") },
-    { on: outdoor >= 1, text: pick2(l, "🌳 Ήρωας της φύσης", "🌳 Outdoor Hero") },
-    { on: c >= 7, text: pick2(l, "🏅 Πλήρης εβδομάδα", "🏅 Full Week") },
-  ]
+  const st = stats(state.log)
+  const [all, setAll] = useState(false)
+  const today = dayKey(new Date())
+  const doneToday = state.log.some((e) => dayKey(e.date) === today)
+  // Last 7 days, oldest first, for the mini bar chart.
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (6 - i))
+    const k = dayKey(d)
+    return {
+      k,
+      label: d.toLocaleDateString(l === "el" ? "el-GR" : "en-GB", { weekday: "narrow" }),
+      n: state.log.filter((e) => dayKey(e.date) === k).length,
+    }
+  })
+  const max = Math.max(1, ...days.map((d) => d.n))
+  const shown = all ? state.log : state.log.slice(0, 10)
   return (
     <>
       <SectionTitle>📊 {t(l, "progress")}</SectionTitle>
+      <div className="card2 streakCard">
+        <div className="streakNum">🔥 {st.streak}</div>
+        <div>
+          <b>{pick2(l, st.streak === 1 ? "μέρα στη σειρά" : "μέρες στη σειρά", st.streak === 1 ? "day in a row" : "days in a row")}</b>
+          <div className="small">
+            {doneToday
+              ? pick2(l, "Παίξατε ήδη σήμερα. Μπράβο!", "You already played today. Well done!")
+              : pick2(l, "Κάντε μια δραστηριότητα σήμερα για να συνεχίσει το σερί.", "Do one activity today to keep the streak going.")}
+            {st.best > 1 && ` ${pick2(l, "Ρεκόρ", "Best")}: ${st.best}`}
+          </div>
+        </div>
+      </div>
       <div className="stats">
         <div className="stat">
-          <b>{c}</b>
-          <span className="small">{t(l, "done")}</span>
+          <b>{st.week}</b>
+          <span className="small">{pick2(l, "αυτή την εβδομάδα", "this week")}</span>
         </div>
         <div className="stat">
-          <b>{cr}</b>
+          <b>{st.total}</b>
+          <span className="small">{pick2(l, "συνολικά", "in total")}</span>
+        </div>
+        <div className="stat">
+          <b>{st.creative}</b>
           <span className="small">{t(l, "creative")}</span>
         </div>
         <div className="stat">
-          <b>{mv}</b>
+          <b>{st.movement}</b>
           <span className="small">{t(l, "movement")}</span>
         </div>
-        <div className="stat">
-          <b>{c}</b>
-          <span className="small">{t(l, "screen")}</span>
+      </div>
+      <div className="card2">
+        <h2>{pick2(l, "Οι τελευταίες 7 μέρες", "The last 7 days")}</h2>
+        <div className="bars" role="img" aria-label={days.map((d) => `${d.label}: ${d.n}`).join(", ")}>
+          {days.map((d) => (
+            <div key={d.k} className="barCol">
+              <span className="barN">{d.n || ""}</span>
+              <div className={`bar ${d.k === today ? "today" : ""}`} style={{ height: `${(d.n / max) * 100}%` }} />
+              <span className="small">{d.label}</span>
+            </div>
+          ))}
         </div>
       </div>
       <div className="card2">
         <h2>{t(l, "badges")}</h2>
         <div className="chips">
-          {badges.map((b) => (
-            <span key={b.text} className={`chip ${b.on ? "sel" : "locked"}`}>
-              {b.text}
+          {BADGES.map((b) => (
+            <span key={b.id} className={`chip ${b.test(st) ? "sel" : "locked"}`}>
+              {l === "el" ? b.el : b.en}
             </span>
           ))}
         </div>
-        {c === 0 && (
+      </div>
+      <SectionTitle>📔 {pick2(l, "Ημερολόγιο παιχνιδιού", "Play journal")}</SectionTitle>
+      {state.log.length === 0 ? (
+        <div className="card2">
+          <p>{pick2(l, "Δεν υπάρχει ακόμη τίποτα εδώ.", "Nothing here yet.")}</p>
           <p className="small">
             {pick2(
               l,
-              "Φτιάξε εβδομαδιαίο πρόγραμμα και σημείωσε ✅ όσες δραστηριότητες κάνετε.",
-              "Create a weekly plan and tick ✅ the activities you do.",
+              "Όταν κάνετε μια δραστηριότητα, πατήστε «✅ Το κάναμε!» και γράψτε μια μικρή ανάμνηση.",
+              "When you do an activity, tap “✅ We did it!” and write a little memory.",
             )}
           </p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="card2">
+          {shown.map((e) => (
+            <JournalItem key={e.id} e={e} />
+          ))}
+          {state.log.length > 10 && !all && (
+            <button className="soft" style={{ width: "100%", marginTop: 8 }} onClick={() => setAll(true)}>
+              {pick2(l, `Όλες (${state.log.length})`, `Show all (${state.log.length})`)}
+            </button>
+          )}
+        </div>
+      )}
     </>
   )
 }
@@ -399,6 +526,53 @@ export function ProfileEdit() {
           {t(l, "save")}
         </button>
       </div>
+      <ReminderSettings />
+    </>
+  )
+}
+
+function ReminderSettings() {
+  const { state, update, toast } = useStore()
+  const l = state.lang
+  const r = state.reminder
+  const apply = async (next: typeof r) => {
+    update((s) => ({ ...s, reminder: next }))
+    const ok = await syncReminders(next, l)
+    if (next.on && !ok) {
+      update((s) => ({ ...s, reminder: { ...next, on: false } }))
+      toast(pick2(l, "Επίτρεψε τις ειδοποιήσεις στις ρυθμίσεις του κινητού.", "Allow notifications in your phone settings."))
+    } else if (next.on) toast(pick2(l, `Υπενθύμιση κάθε μέρα στις ${next.time}`, `Reminder every day at ${next.time}`))
+  }
+  return (
+    <>
+      <SectionTitle>🔔 {pick2(l, "Καθημερινή υπενθύμιση", "Daily reminder")}</SectionTitle>
+      <div className="card2 fields">
+        {remindersSupported() ? (
+          <>
+            <label className="row between">
+              <span>{pick2(l, "Ειδοποίηση με την ιδέα της ημέρας", "Notification with the idea of the day")}</span>
+              <input
+                type="checkbox"
+                className="toggle"
+                checked={r.on}
+                onChange={(e) => apply({ ...r, on: e.target.checked })}
+              />
+            </label>
+            <label>
+              {pick2(l, "Ώρα", "Time")}
+              <input type="time" value={r.time} onChange={(e) => e.target.value && apply({ ...r, time: e.target.value })} />
+            </label>
+          </>
+        ) : (
+          <p className="small">
+            {pick2(
+              l,
+              "Οι υπενθυμίσεις λειτουργούν στην εφαρμογή PlayNest για κινητό (Android/iOS).",
+              "Reminders work in the PlayNest mobile app (Android/iOS).",
+            )}
+          </p>
+        )}
+      </div>
     </>
   )
 }
@@ -408,14 +582,18 @@ export function Explore({ initialCat }: { initialCat: string }) {
   const l = state.lang
   const [cat, setCat] = useState(CATEGORIES.some((c) => c[0] === initialCat) ? initialCat : "all")
   const [q, setQ] = useState("")
+  const [time, setTime] = useState("all")
   const list = useMemo(() => {
-    const nq = norm(q.trim())
-    return activities.filter(
-      (a) =>
-        (cat === "all" || a.tags.includes(cat)) &&
-        (!nq || norm(`${a.titleEl} ${a.titleEn} ${actText.desc(a, l)}`).includes(nq)),
-    )
-  }, [cat, q, l])
+    // Every word must match somewhere: title (both languages), description or materials.
+    const words = norm(q.trim()).split(/\s+/).filter(Boolean)
+    return activities.filter((a) => {
+      if (cat !== "all" && !a.tags.includes(cat)) return false
+      if (time !== "all" && !a.times.includes(time)) return false
+      if (!words.length) return true
+      const hay = norm(`${a.titleEl} ${a.titleEn} ${actText.desc(a, l)} ${actText.materials(a, l).join(" ")}`)
+      return words.every((w) => hay.includes(w))
+    })
+  }, [cat, q, l, time])
   const chips = useRef<HTMLDivElement>(null)
   useEffect(() => {
     chips.current?.querySelector(".on")?.scrollIntoView({ block: "nearest", inline: "center" })
@@ -440,7 +618,7 @@ export function Explore({ initialCat }: { initialCat: string }) {
       <input
         className="exsearch"
         type="search"
-        placeholder={t(l, "search")}
+        placeholder={pick2(l, "Αναζήτηση: τίτλος ή υλικό (π.χ. χαρτί)…", "Search: title or material (e.g. paper)…")}
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
@@ -448,6 +626,13 @@ export function Explore({ initialCat }: { initialCat: string }) {
         {CATEGORIES.map(([key, gr, eng]) => (
           <button key={key} className={cat === key ? "on" : ""} onClick={() => pickCat(key)}>
             {l === "el" ? gr : eng}
+          </button>
+        ))}
+      </div>
+      <div className="exfilters timeFilters">
+        {["all", "5", "15", "30", "60"].map((x) => (
+          <button key={x} className={time === x ? "on" : ""} onClick={() => setTime(x)}>
+            ⏱ {x === "all" ? pick2(l, "Κάθε διάρκεια", "Any length") : `${x}'`}
           </button>
         ))}
       </div>

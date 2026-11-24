@@ -3,7 +3,9 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22.13.0" },
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -12,18 +14,23 @@
     "cap:sync": "pnpm build && cap sync",
     "android:open": "pnpm cap:sync && cap open android",
     "android:apk": "pnpm cap:sync && cd android && ./gradlew assembleDebug",
-    "deploy:web": "pnpm build && wrangler deploy"
+    "build:worker": "pnpm build && node scripts/embed-worker.mjs",
+    "deploy:web": "pnpm build:worker && wrangler deploy",
+    "typecheck:worker": "tsc -p worker --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.9.0",
     "@capacitor/android": "8.5.1",
     "@capacitor/app": "8.1.2",
     "@capacitor/core": "8.5.1",
     "@capacitor/ios": "8.5.1",
+    "@capacitor/local-notifications": "^8.3.1",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@capacitor/cli": "8.5.1",
+    "@cloudflare/workers-types": "4.20260515.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

@@ -4,8 +4,17 @@ import type { ActType, Activity, Age, ChildProfile, Interest, Place } from "./ty
 export const activities = raw as Activity[]
 const byId = new Map(activities.map((a) => [a.id, a]))
 
+let custom = new Map<number, Activity>()
+
+/** Make AI-created activities resolvable by id (called by the store on every render). */
+export function registerCustom(list: Activity[]): void {
+  if (list.length !== custom.size || list.some((a) => !custom.has(a.id))) {
+    custom = new Map(list.map((a) => [a.id, a]))
+  }
+}
+
 export function getActivity(id: number): Activity | undefined {
-  return byId.get(id)
+  return byId.get(id) ?? custom.get(id)
 }
 
 export interface Filter {
