@@ -2,6 +2,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Capacitor } from "@capacitor/core"
 import App from "./App"
+import { importLegacyData } from "./lib/legacy"
 import { StoreProvider } from "./lib/store"
 import "./styles.css"
 import "./extra.css"
@@ -20,3 +21,5 @@ if (import.meta.env.PROD && "serviceWorker" in navigator && !Capacitor.isNativeP
     navigator.serviceWorker.register("./sw.js").catch(() => {})
   })
 }
+
+importLegacyData()

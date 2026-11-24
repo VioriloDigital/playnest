@@ -46,8 +46,23 @@ jobs:
       - name: Build web app and sync to Android
         run: pnpm cap:sync
 
+      - name: Restore signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.PLAYNEST_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/playnest.jks"
+            echo "PLAYNEST_KEYSTORE_FILE=$RUNNER_TEMP/playnest.jks" >> "$GITHUB_ENV"
+            echo "Signing with the PlayNest key: updates install over the previous version."
+          else
+            echo "::warning::PLAYNEST_KEYSTORE_BASE64 is not set: this APK uses a throwaway key and needs an uninstall before installing."
+          fi
+
       - name: Build APK
         working-directory: android
+        env:
+          PLAYNEST_KEYSTORE_PASSWORD: ${{ secrets.PLAYNEST_KEYSTORE_PASSWORD }}
+          PLAYNEST_VERSION_CODE: ${{ github.run_number }}
         run: ./gradlew --no-daemon assembleDebug
 
       - name: Upload PlayNest APK

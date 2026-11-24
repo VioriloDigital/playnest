@@ -1,0 +1,13 @@
+<!doctype html>
+<meta charset="utf-8">
+<script>
+// Runs at the file:// origin that PlayNest 1.x used, so it can read that version's saved data.
+var out = {};
+try {
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (/^(pn_|playnest)/.test(k)) out[k] = localStorage.getItem(k);
+  }
+} catch (e) {}
+PlayNestLegacy.done(JSON.stringify(out));
+</script>
