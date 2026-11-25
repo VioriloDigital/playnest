@@ -3,9 +3,12 @@ import { createRoot } from "react-dom/client"
 import { Capacitor } from "@capacitor/core"
 import App from "./App"
 import { importLegacyData } from "./lib/legacy"
+import { captureInstallPrompt } from "./views/install"
 import { StoreProvider } from "./lib/store"
 import "./styles.css"
 import "./extra.css"
+
+captureInstallPrompt()
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

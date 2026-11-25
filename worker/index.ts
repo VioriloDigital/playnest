@@ -151,7 +151,12 @@ export default {
       return m ? handleAI(req, env, m[1]) : json(req, { error: "not_found" }, 404)
     }
 
+    // "/" is the landing page; the app lives at /app/ (its files are the same ones, without the prefix).
+    if (url.pathname === "/app") return Response.redirect(`${url.origin}/app/${url.search}`, 301)
     let path = url.pathname
+    const inApp = path.startsWith("/app/")
+    if (inApp) path = path.slice(4)
+    if (path === "/" && !inApp) path = "/landing.html"
     if (!FILES[path] && FILES[`${path}.html`]) path = `${path}.html` // /privacy, /terms
     if (!FILES[path]) path = "/index.html"
     const [type, data, binary] = FILES[path]

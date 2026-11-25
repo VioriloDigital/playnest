@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlayNest · Ιδέες παιχνιδιού για παιδιά 1–8 ετών</title>
+<meta name="description" content="200 δραστηριότητες για παιδιά 1–8 ετών, αστεράκια και αυτοκόλλητα, εργαλεία για γονείς. Δωρεάν, χωρίς λογαριασμό, για κινητό και υπολογιστή.">
+<meta name="theme-color" content="#18b9a5">
+<meta property="og:title" content="PlayNest · Ιδέες παιχνιδιού για κάθε στιγμή">
+<meta property="og:description" content="200 δραστηριότητες για παιδιά 1–8 ετών, αστεράκια και αυτοκόλλητα, εργαλεία για γονείς.">
+<meta property="og:image" content="/icon-512.png">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>
+  // Old links (#/activity/…) and people who already use the app go straight to it; ?home shows this page.
+  (function () {
+    var h = location.hash, home = /[?&]home\b/.test(location.search), used = false;
+    try { used = !!localStorage.getItem("playnest_state_v3"); } catch (e) {}
+    // The app used to live at "/" with its own service worker; it now has one at /app/.
+    if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistrations().then(function (rs) {
+      rs.forEach(function (r) { if (r.scope === location.origin + "/") r.unregister(); });
+    }).catch(function () {});
+    if (h.indexOf("#/") === 0) location.replace("/app/" + h);
+    else if (used && !home) location.replace("/app/");
+  })();
+</script>
+<style>
+:root{--ink:#172033;--muted:#5b6678;--teal:#15bca6;--teal-d:#0f766e;--cream:#fffaf6;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--cream)}
+*{box-sizing:border-box}body{margin:0}a{color:inherit}
+.wrap{max-width:1120px;margin:auto;padding:0 20px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:22px;text-decoration:none}
+.brand img{width:44px;height:44px;border-radius:12px}
+.navlinks{display:flex;gap:18px;align-items:center;font-weight:700;color:var(--muted)}
+.navlinks a{text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:18px;padding:16px 22px;font-weight:800;font-size:17px;text-decoration:none;cursor:pointer}
+.btn.primary{background:linear-gradient(90deg,#15bca6,#12a982);color:#fff;box-shadow:0 12px 26px #16a08533}
+.btn.ghost{background:#fff;color:var(--teal-d);border:2px solid #bfe9e2}
+.btn.small{padding:10px 16px;font-size:15px}
+.hero{background:linear-gradient(160deg,#fff4e6 0%,#fbf1e1 45%,#e3f6f2 100%)}
+.heroIn{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:30px 0 70px}
+.hero h1{font-size:clamp(36px,5vw,58px);line-height:1.05;margin:0 0 16px;letter-spacing:-1px}
+.hero h1 span{color:var(--teal-d)}
+.lead{font-size:20px;line-height:1.5;color:var(--muted);margin:0 0 26px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.trust{margin-top:18px;color:var(--muted);font-size:14px;font-weight:600}
+.phones{position:relative;height:560px}
+.phone{position:absolute;width:250px;border-radius:34px;border:8px solid #1e293b;overflow:hidden;box-shadow:0 30px 60px #0f172a33;background:#fff}
+.phone img{display:block;width:100%}
+.phone.a{left:0;top:40px;transform:rotate(-5deg)}
+.phone.b{right:0;top:0;transform:rotate(4deg)}
+section{padding:70px 0}
+h2{font-size:clamp(28px,3.5vw,40px);margin:0 0 10px;text-align:center}
+.sub{text-align:center;color:var(--muted);font-size:18px;margin:0 auto 40px;max-width:640px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{background:#fff;border-radius:26px;padding:24px;box-shadow:0 10px 26px #0f172a0d;border:1px solid #eef2f2}
+.feat .ico{font-size:38px}
+.feat h3{margin:10px 0 6px;font-size:20px}
+.feat p{margin:0;color:var(--muted);line-height:1.5}
+.show{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center;margin-bottom:60px}
+.show.rev .shotBox{order:2}
+.shotBox{display:flex;justify-content:center;background:linear-gradient(160deg,#fff4e6,#e3f6f2);border-radius:32px;padding:30px 0 0;overflow:hidden;height:440px}
+.shotBox img{width:270px;border-radius:26px 26px 0 0;border:8px solid #1e293b;border-bottom:0;box-shadow:0 20px 40px #0f172a33;object-fit:cover;object-position:top}
+.show h3{font-size:30px;margin:0 0 12px}
+.show p{font-size:18px;color:var(--muted);line-height:1.55;margin:0 0 14px}
+.show ul{margin:0;padding-left:20px;line-height:1.8;font-size:17px}
+.alt{background:#f2faf8}
+.get{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#fff;border-radius:26px;padding:26px;box-shadow:0 10px 26px #0f172a0d;display:flex;flex-direction:column;gap:10px}
+.card .ico{font-size:40px}.card h3{margin:0;font-size:21px}.card p{margin:0;color:var(--muted);line-height:1.5;flex:1}
+.privacy{text-align:center;max-width:720px;margin:auto}
+.privacy .big{font-size:52px}
+footer{padding:30px 0 50px;color:var(--muted);font-size:14px;border-top:1px solid #eef2f2}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+footer a{text-decoration:none;font-weight:700;margin-right:14px}
+@media (max-width:860px){
+  .heroIn,.show{grid-template-columns:1fr}
+  .show.rev .shotBox{order:0}
+  .phones{height:430px;max-width:420px;margin:auto;width:100%}
+  .phone{width:190px}
+  .features,.get{grid-template-columns:1fr}
+  .navlinks a.hide{display:none}
+  section{padding:50px 0}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/?home"><img src="/icon-192.png" alt="">PlayNest</a>
+      <div class="navlinks">
+        <a class="hide" href="#features">Λειτουργίες</a>
+        <a class="hide" href="#get">Λήψη</a>
+        <a class="btn primary small" href="/app/">Άνοιγμα</a>
+      </div>
+    </nav>
+    <div class="heroIn">
+      <div>
+        <h1>Τι θα παίξουμε <span>σήμερα;</span></h1>
+        <p class="lead">Το PlayNest δίνει στους γονείς έτοιμες, απλές ιδέες παιχνιδιού για παιδιά 1–8 ετών, για κάθε στιγμή της μέρας: στο σπίτι, έξω, στο αυτοκίνητο.</p>
+        <div class="ctas">
+          <a class="btn primary" href="/app/">✨ Άνοιξε την εφαρμογή</a>
+          <a class="btn ghost" href="https://github.com/VioriloDigital/playnest/releases/latest/download/PlayNest.apk">🤖 Για Android</a>
+        </div>
+        <p class="trust">Δωρεάν · Χωρίς λογαριασμό · Χωρίς διαφημίσεις · Σε κινητό, tablet και υπολογιστή</p>
+      </div>
+      <div class="phones" aria-hidden="true">
+        <div class="phone a"><img src="/tour/home.webp" alt=""></div>
+        <div class="phone b"><img src="/tour/rewards.webp" alt=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Όλα όσα χρειάζεστε για να παίξετε</h2>
+    <p class="sub">Από το «βαριέμαι» ως το «άλλο ένα!» σε ένα πάτημα.</p>
+    <div class="features">
+      <div class="feat"><div class="ico">🎨</div><h3>200 δραστηριότητες</h3><p>Δημιουργικές, μαθησιακές, κινητικές και ήρεμες, με υλικά, δεξιότητες και βήματα.</p></div>
+      <div class="feat"><div class="ico">⚡</div><h3>Βρες μου κάτι τώρα</h3><p>Βρέχει; Έχετε 10 λεπτά; Είστε στο αυτοκίνητο; Μια ιδέα στην ηλικία του παιδιού, αμέσως.</p></div>
+      <div class="feat"><div class="ico">▶️</div><h3>Βήμα-βήμα</h3><p>Μεγάλα γράμματα, λίστα υλικών και χρονόμετρο, για να παίζετε χωρίς να κοιτάτε την οθόνη.</p></div>
+      <div class="feat"><div class="ico">⭐</div><h3>Αστεράκια &amp; αυτοκόλλητα</h3><p>Κάθε δραστηριότητα δίνει ένα αστεράκι, με γιορτή! 40 αυτοκόλλητα, ανταμοιβές και δίπλωμα.</p></div>
+      <div class="feat"><div class="ico">🧰</div><h3>Εργαλεία για γονείς</h3><p>Χρονόμετρο που βλέπει το παιδί, ρουτίνες με εικόνες, τροχός συναισθημάτων και ανάσες.</p></div>
+      <div class="feat"><div class="ico">✨</div><h3>PlayNest AI</h3><p>Πείτε τι έχετε στο σπίτι ή βγάλτε μια φωτογραφία, και παίρνετε νέα δραστηριότητα.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="show">
+      <div class="shotBox"><img src="/tour/play.webp" alt="Λειτουργία βήμα-βήμα με χρονόμετρο"></div>
+      <div>
+        <h3>▶️ Παίζουμε, βήμα-βήμα</h3>
+        <p>Κάθε δραστηριότητα έχει τα υλικά, τις δεξιότητες που αναπτύσσει και απλά βήματα. Πατήστε «Ξεκινάμε!» και ακολουθήστε.</p>
+        <ul><li>Λίστα υλικών για να τα ετοιμάσετε</li><li>Χρονόμετρο, και η οθόνη δεν σβήνει</li><li>«Το κάναμε!» με μια μικρή ανάμνηση στο ημερολόγιο</li></ul>
+      </div>
+    </div>
+    <div class="show rev">
+      <div class="shotBox"><img src="/tour/rewards.webp" alt="Αστεράκια, αυτοκόλλητα και ανταμοιβές"></div>
+      <div>
+        <h3>⭐ Τα παιδιά μαζεύουν αστεράκια</h3>
+        <p>Κάθε δραστηριότητα που ολοκληρώνει το παιδί του δίνει ένα αστεράκι, με κομφετί και «Μπράβο!».</p>
+        <ul><li>Κάθε 3 αστεράκια, νέο αυτοκόλλητο στο άλμπουμ</li><li>Ανταμοιβές που ορίζετε εσείς: «10 ⭐ = παγωτό»</li><li>Δίπλωμα Μικρού Εξερευνητή για εκτύπωση</li></ul>
+      </div>
+    </div>
+    <div class="show">
+      <div class="shotBox"><img src="/tour/tools.webp" alt="Τώρα και μετά, ρουτίνα με εικόνες"></div>
+      <div>
+        <h3>🧰 Για τις δύσκολες στιγμές</h3>
+        <p>Εργαλεία για αλλαγές, ρουτίνες και μεγάλα συναισθήματα.</p>
+        <ul><li>⏱️ Χρονόμετρο με κόκκινο δίσκο που μικραίνει</li><li>📋 Τώρα → Μετά: πρωινό και βραδινό με εικόνες</li><li>💗 Τροχός συναισθημάτων και 🧘 ανάσες ηρεμίας</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="get">
+  <div class="wrap">
+    <h2>Παίξτε όπου θέλετε</h2>
+    <p class="sub">Ίδια εφαρμογή σε κινητό, tablet και υπολογιστή.</p>
+    <div class="get">
+      <div class="card"><div class="ico">💻</div><h3>Στον browser</h3><p>Ανοίγει αμέσως, χωρίς εγκατάσταση. Δουλεύει και χωρίς internet μετά το πρώτο άνοιγμα.</p><a class="btn primary small" href="/app/">Άνοιγμα</a></div>
+      <div class="card"><div class="ico">📲</div><h3>Στην αρχική οθόνη</h3><p>Από την εφαρμογή πατήστε «Εγκατάσταση» (ή στο iPhone: Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας»).</p><a class="btn ghost small" href="/app/#/install">Πώς;</a></div>
+      <div class="card"><div class="ico">🤖</div><h3>Android</h3><p>Κατεβάστε την εφαρμογή για Android. Σύντομα και στο Google Play.</p><a class="btn ghost small" href="https://github.com/VioriloDigital/playnest/releases/latest/download/PlayNest.apk">Λήψη APK</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap privacy">
+    <div class="big">🔒</div>
+    <h2>Τα δεδομένα σας μένουν σε εσάς</h2>
+    <p class="sub">Χωρίς λογαριασμό, χωρίς διαφημίσεις, χωρίς παρακολούθηση. Το προφίλ του παιδιού, τα αγαπημένα και το ημερολόγιο αποθηκεύονται μόνο στη συσκευή σας.</p>
+    <a class="btn primary" href="/app/">Ξεκινήστε τώρα ✨</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><a href="/privacy">Πολιτική απορρήτου</a><a href="/terms">Όροι χρήσης</a><a href="mailto:info@viorilo.gr">info@viorilo.gr</a></div>
+    <div>© 2026 Viorilo Digital · PlayNest</div>
+  </div>
+</footer>
+</body>
+</html>

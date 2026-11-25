@@ -7,6 +7,7 @@ import { useStore } from "./lib/store"
 import { PlayMode } from "./views/play"
 import { CelebrationOverlay, Diploma, Rewards } from "./views/rewards"
 import { Intro, openTour, Tour } from "./views/intro"
+import { InstallView } from "./views/install"
 import { Breathing, FeelingsWheel, RoutineTool, ToolsHome, VisualTimer } from "./views/tools"
 import { ActivityView, Explore, Favorites, Home, Progress, ProfileEdit, Week } from "./views/core"
 import {
@@ -75,6 +76,9 @@ export default function App() {
     case "activity":
       view = <ActivityView id={Number(sub)} />
       break
+    case "install":
+      view = <InstallView />
+      break
     case "tools":
       view =
         sub === "timer" ? <VisualTimer /> : sub === "routine" ? <RoutineTool /> : sub === "emotions" ? <FeelingsWheel /> : sub === "breath" ? <Breathing /> : <ToolsHome />
@@ -100,7 +104,7 @@ export default function App() {
       view = <Home />
   }
 
-  const navActive = ["activity", "explore", "profile", "play", "rewards", "diploma", "tools"].includes(root) ? null : root
+  const navActive = ["activity", "explore", "profile", "play", "rewards", "diploma", "tools", "install"].includes(root) ? null : root
   const goTab = (to: string) => {
     if (to === root && !sub) return
     // Tabs replace the current entry when nothing is behind it, so Android back leaves the app from a tab.
