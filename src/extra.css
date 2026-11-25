@@ -322,3 +322,23 @@ header .helpBtn { position: absolute; left: 20px; top: calc(24px + var(--sat)); 
 .seasonTile small { font-size: 11px; font-weight: 700; color: #475569; }
 @media (max-width: 430px) { .seasonGrid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) { .seasonStrip { flex-wrap: wrap; overflow: visible; } .seasonGrid { grid-template-columns: repeat(5, 1fr); } }
+
+/* Bottom menu: bigger icons and labels (phone and tablet) */
+@media (max-width: 1023px) {
+  .app { padding-bottom: calc(106px + var(--sab)); }
+  nav { height: calc(88px + var(--sab)); padding: 6px 6px var(--sab); background: #fff; border-top: 1px solid #e8eeee; box-shadow: 0 -6px 24px #0f172a0f; }
+  nav button { gap: 4px; padding: 0; color: #64748b; font-size: 13px !important; font-weight: 700; -webkit-tap-highlight-color: transparent; }
+  nav .navIcon { font-size: 32px; line-height: 1; width: 58px; height: 44px; display: grid; place-items: center; border-radius: 16px; transition: transform .15s ease, background .15s ease; filter: drop-shadow(0 2px 2px #0f172a22); }
+  nav .navLabel { font-size: 13px; letter-spacing: -0.1px; white-space: nowrap; }
+  nav button.active { color: #0f766e; font-weight: 900; }
+  nav button.active .navIcon { background: #dff7f2; transform: translateY(-2px) scale(1.06); }
+  nav button:active .navIcon { transform: scale(.92); }
+  .toast { bottom: calc(100px + var(--sab)); }
+}
+@media (max-width: 360px) {
+  nav .navIcon { font-size: 28px; width: 50px; }
+  nav .navLabel { font-size: 11.5px; }
+}
+@media (min-width: 1024px) {
+  nav .navIcon { font-size: 22px; }
+}

@@ -156,9 +156,16 @@ export default function App() {
       <main key={path.join("/")}>{view}</main>
       <nav className="noprint">
         {NAV.map(([to, icon, key]) => (
-          <button key={key} className={navActive === to ? "active" : ""} onClick={() => goTab(to)}>
-            {icon}
-            <span>{t(l, key)}</span>
+          <button
+            key={key}
+            className={navActive === to ? "active" : ""}
+            aria-current={navActive === to ? "page" : undefined}
+            onClick={() => goTab(to)}
+          >
+            <span className="navIcon" aria-hidden>
+              {icon}
+            </span>
+            <span className="navLabel">{t(l, key)}</span>
           </button>
         ))}
       </nav>
