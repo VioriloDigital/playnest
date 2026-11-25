@@ -4,6 +4,7 @@ import { t, type TKey } from "./lib/i18n"
 import { back, canGoBack, go, useRoute } from "./lib/router"
 import { onReminderTap, syncReminders } from "./lib/reminder"
 import { useStore } from "./lib/store"
+import { ChartIcon, CrownIcon, HeartIcon, HomeIcon, WeekIcon } from "./navIcons"
 import { PlayMode } from "./views/play"
 import { CelebrationOverlay, Diploma, Rewards } from "./views/rewards"
 import { Intro, openTour, Tour } from "./views/intro"
@@ -23,12 +24,12 @@ import {
   PlusSnap,
 } from "./views/plus"
 
-const NAV: [string, string, TKey][] = [
-  ["", "🏠", "home"],
-  ["week", "📅", "week"],
-  ["favorites", "❤️", "favorites"],
-  ["progress", "📊", "progress"],
-  ["plus", "👑", "plus"],
+const NAV: [string, () => React.JSX.Element, TKey][] = [
+  ["", HomeIcon, "home"],
+  ["week", WeekIcon, "week"],
+  ["favorites", HeartIcon, "favorites"],
+  ["progress", ChartIcon, "progress"],
+  ["plus", CrownIcon, "plus"],
 ]
 
 const PLUS_VIEWS: Record<string, () => React.JSX.Element> = {
@@ -155,7 +156,7 @@ export default function App() {
       </header>
       <main key={path.join("/")}>{view}</main>
       <nav className="noprint">
-        {NAV.map(([to, icon, key]) => (
+        {NAV.map(([to, Icon, key]) => (
           <button
             key={key}
             className={navActive === to ? "active" : ""}
@@ -163,7 +164,7 @@ export default function App() {
             onClick={() => goTab(to)}
           >
             <span className="navIcon" aria-hidden>
-              {icon}
+              <Icon />
             </span>
             <span className="navLabel">{t(l, key)}</span>
           </button>

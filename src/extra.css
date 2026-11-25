@@ -342,3 +342,10 @@ header .helpBtn { position: absolute; left: 20px; top: calc(24px + var(--sat)); 
 @media (min-width: 1024px) {
   nav .navIcon { font-size: 22px; }
 }
+
+/* SVG menu icons */
+nav .navIcon > svg { max-width: 38px; max-height: 38px; }
+nav .navIcon { filter: drop-shadow(0 2px 2px #0f172a26); }
+nav button:not(.active) .navIcon { opacity: .9; }
+@media (max-width: 360px) { nav .navIcon svg { width: 30px; height: 30px; } }
+@media (min-width: 1024px) { nav .navIcon { width: 30px; height: 30px; flex: none; } }
