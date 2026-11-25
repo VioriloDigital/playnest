@@ -1,7 +1,10 @@
 import raw from "../data/activities.json"
+import seasonalRaw from "../data/seasonal.json"
+import { suggestableThemes, themeOf } from "./seasons"
 import type { ActType, Activity, Age, ChildProfile, Interest, Place } from "./types"
 
-export const activities = raw as Activity[]
+/** The 200-activity library plus the seasonal themes (ids 1001+, tagged `season:<theme>`). */
+export const activities = [...(raw as Activity[]), ...(seasonalRaw as Activity[])]
 export const FREE = activities.filter((a) => !a.premium)
 const byId = new Map(activities.map((a) => [a.id, a]))
 
@@ -17,9 +20,16 @@ export function isLocked(a: Activity): boolean {
   return a.premium && !premiumAccess
 }
 
-/** Activities this user can open: everything with Plus, the free ones without. */
-function available(): Activity[] {
-  return premiumAccess ? activities : FREE
+/**
+ * Activities this user can be offered at random: everything with Plus, the free ones without,
+ * and seasonal ones only in their season (no Christmas crafts in July).
+ */
+function available(now = new Date()): Activity[] {
+  const live = suggestableThemes(now)
+  return (premiumAccess ? activities : FREE).filter((a) => {
+    const th = themeOf(a.tags)
+    return !th || live.has(th.key)
+  })
 }
 
 /** Make AI-created activities resolvable by id (called by the store on every render). */
@@ -78,7 +88,8 @@ export function pickActivity(f: Filter = {}): Activity {
 
 export function activityOfTheDay(now = new Date()): Activity {
   const key = now.getFullYear() * 372 + now.getMonth() * 31 + now.getDate()
-  const all = available()
+  // The base library only, so the activity of the day doesn't jump with the seasons.
+  const all = available(now).filter((a) => !themeOf(a.tags))
   return all[key % all.length]
 }
 
@@ -185,6 +196,7 @@ export function smartPick(opts: {
 
 export const CATEGORIES: [string, string, string][] = [
   ["all", "✨ Όλα", "✨ All"],
+  ["season", "🎉 Εποχής", "🎉 Seasonal"],
   ["creative", "🎨 Δημιουργικές", "🎨 Creative"],
   ["learning", "🧠 Μάθηση", "🧠 Learning"],
   ["active", "🏃 Κίνηση", "🏃 Active"],
