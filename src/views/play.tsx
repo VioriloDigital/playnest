@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
-import { getActivity } from "../lib/activities"
+import { getActivity, isLocked } from "../lib/activities"
 import { actText, pick2 } from "../lib/i18n"
 import { useCompleteActivity } from "../lib/rewards"
+import { ActivityView } from "./core"
 import { back, go } from "../lib/router"
 import { useStore } from "../lib/store"
 
@@ -32,6 +33,14 @@ function useWakeLock(active: boolean) {
 }
 
 export function PlayMode({ id }: { id: number }) {
+  const a = getActivity(id)
+  useStore()
+  // Plus activities open their lock card on the activity screen instead.
+  if (a && isLocked(a)) return <ActivityView id={id} />
+  return <PlayInner id={id} />
+}
+
+function PlayInner({ id }: { id: number }) {
   const { state } = useStore()
   const complete = useCompleteActivity()
   const l = state.lang

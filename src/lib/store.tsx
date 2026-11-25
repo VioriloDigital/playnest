@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import type { ReactNode } from "react"
-import { registerCustom } from "./activities"
+import { registerCustom, setPremiumAccess } from "./activities"
+import { hasPlus } from "./plus"
 import { AGES, type AppState, type ChildProfile, type Lang } from "./types"
 
 const KEY = "playnest_state_v3"
@@ -51,6 +52,7 @@ export const defaultState: AppState = {
   aiActivities: [],
   routines: [],
   introSeen: false,
+  plus: {},
 }
 
 /** Load state, migrating data saved by PlayNest V1 (pn_* keys and playnest_plus_v2). */
@@ -144,6 +146,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const timer = useRef<number | undefined>(undefined)
 
   registerCustom(state.aiActivities)
+  setPremiumAccess(hasPlus(state))
   useEffect(() => {
     try {
       localStorage.setItem(KEY, JSON.stringify(state))

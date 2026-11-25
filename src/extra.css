@@ -273,3 +273,29 @@ header .helpBtn { position: absolute; left: 20px; top: calc(24px + var(--sat)); 
 @media (min-width: 1400px) {
   .exgrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
+
+/* Free vs Plus */
+.miniPlus { display: inline-block; margin-left: 6px; background: #fff1bf; color: #92400e; font-weight: 900; border-radius: 999px; padding: 4px 8px; font-size: 11px; }
+.recCard .miniPlus { margin: 2px 0 4px; }
+.plusStatus { margin-top: 14px; }
+.plusStatus.on { background: #ffffff22; border-radius: 16px; padding: 12px; }
+.plusHeroV2 .plusStatus .secondary { background: #ffffff15; color: #fff; border-color: #ffffff55; }
+.plusHeroV2 .plusStatus .small { color: #e2e8f0; }
+.plusLock .plusStatus .secondary { opacity: .7; }
+.compare { padding: 6px 12px; }
+.cmpRow { display: grid; grid-template-columns: 1fr 64px 92px; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f5; font-size: 14px; }
+.cmpRow:last-child { border-bottom: 0; }
+.cmpHead { font-size: 13px; }
+.cmpFree, .cmpPlus { text-align: center; font-weight: 800; }
+.cmpFree { color: #64748b; }
+.cmpPlus { color: #b45309; }
+.cmpHead .cmpPlus { background: #fff1bf; border-radius: 999px; padding: 4px 0; }
+.plusFeature { position: relative; }
+.pfLock { position: absolute; top: 10px; right: 10px; font-size: 16px; }
+.plusLock { text-align: center; border: 2px solid #fde68a; background: linear-gradient(160deg, #fffbeb, #fff); }
+.plIcon { font-size: 48px; }
+.plusLock h2 { margin: 8px 0 6px; }
+.plusLock p { color: #475569; line-height: 1.5; }
+.plusLock .plusCTA { width: 100%; }
+.lockedSteps { position: relative; max-height: 190px; overflow: hidden; filter: blur(3px); user-select: none; pointer-events: none; }
+.plusNote { margin-top: 10px; }

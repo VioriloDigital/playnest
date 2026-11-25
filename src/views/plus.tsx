@@ -13,18 +13,20 @@ import {
 import { actText, pick2 } from "../lib/i18n"
 import { go } from "../lib/router"
 import { aiActivity, AIError, aiErrorText, aiSnap, photoToJpeg } from "../lib/ai"
+import { hasPlus } from "../lib/plus"
 import { newId, useStore } from "../lib/store"
+import { PlusCompare, PlusGate, PlusStatus } from "./premium"
 import { AGES, MAX_PROFILES, type ActType, type Activity, type Age, type AppState, type Place, AVATARS } from "../lib/types"
 
 export function PlusHome() {
   const { state, profile } = useStore()
+  const plus = hasPlus(state)
   const l = state.lang
   const p = (gr: string, en: string) => pick2(l, gr, en)
   const features: [string, string, string, string][] = [
     ["plus/snap", "📸", "Snap & Play", p("Φωτογράφισε ό,τι έχεις και βρες παιχνίδι.", "Photograph what you have and find a game.")],
     ["plus/ai", "🤖", "PlayNest AI", p("Ιδέες με βάση ηλικία, χρόνο, χώρο και υλικά.", "Ideas based on age, time, place and materials.")],
     ["plus/profiles", "👶", p("Προφίλ & αδέλφια", "Profiles & siblings"), p("Έως 3 παιδιά και κοινές δραστηριότητες.", "Up to 3 children and sibling activities.")],
-    ["week", "📅", "Smart Planner", p("Ισορροπημένο πρόγραμμα 7 ημερών.", "Balanced 7-day plan.")],
     ["plus/packs", "🧰", "Premium Packs", p("Ταξίδι, βροχή, STEM, χωρίς οθόνη και άλλα.", "Travel, rainy day, STEM, screen-free and more.")],
     ["plus/challenge", "🏆", "7-Day Challenge", p("Μία μικρή αποστολή κάθε μέρα.", "One small mission every day.")],
     ["plus/progress", "📈", "Advanced Progress", p("Συνήθειες, ποικιλία και πρόοδος.", "Habits, variety and progress.")],
@@ -37,38 +39,30 @@ export function PlusHome() {
         <h1>👑 PlayNest Plus</h1>
         <p>
           {p(
-            "Έξυπνες ιδέες, εξατομίκευση και εργαλεία που κάνουν το «τι να παίξουμε;» πανεύκολο.",
-            "Smart ideas, personalization and tools that make “what should we play?” effortless.",
+            `Όλες οι ${activities.length} δραστηριότητες, PlayNest AI, Snap & Play, έως 3 παιδιά και κάθε μήνα κάτι καινούργιο.`,
+            `All ${activities.length} activities, PlayNest AI, Snap & Play, up to 3 children and something new every month.`,
           )}
         </p>
-        <button className="plusCTA" onClick={() => go("plus/ai")}>
-          ✨ {p("Δημιούργησε δραστηριότητα τώρα", "Create an activity now")}
-        </button>
+        <PlusStatus />
       </div>
-      <SectionTitle>{p("Τα εργαλεία σου", "Your tools")}</SectionTitle>
+      <SectionTitle>{p("Δωρεάν ή Plus;", "Free or Plus?")}</SectionTitle>
+      <PlusCompare />
+      <SectionTitle>{p("Τα εργαλεία του Plus", "Plus tools")}</SectionTitle>
       <div className="plusGridV2">
         {features.map(([to, icon, title, sub]) => (
           <button key={to} className="plusFeature" onClick={() => go(to)}>
             <span className="pfIcon">{icon}</span>
+            {!plus && to !== "plus/profiles" && <span className="pfLock">🔒</span>}
             <b>{title}</b>
             <small>{sub}</small>
           </button>
         ))}
       </div>
-      <SectionTitle>✨ {p("Για εσάς", "For you")}</SectionTitle>
+      <SectionTitle>✨ {p("Δραστηριότητες Plus για εσάς", "Plus activities for you")}</SectionTitle>
       <div className="recGrid">
         {personalized(profile).map((a) => (
           <RecCard key={a.id} a={a} />
         ))}
-      </div>
-      <div className="plusPanel">
-        <b>{p("🎁 Δωρεάν κατά τη δοκιμαστική περίοδο", "🎁 Free during the trial period")}</b>
-        <p className="small">
-          {p(
-            "Οι λειτουργίες Plus είναι ανοιχτές για δοκιμή. Οι συνδρομές δεν έχουν ενεργοποιηθεί ακόμη και δεν γίνεται καμία χρέωση.",
-            "Plus features are open for testing. Subscriptions are not enabled yet and nothing is charged.",
-          )}
-        </p>
       </div>
     </>
   )
@@ -382,7 +376,15 @@ export function PlusProfiles() {
             </div>
           </div>
         ))}
-        {state.profiles.length < MAX_PROFILES &&
+        {state.profiles.length < MAX_PROFILES && !hasPlus(state) && (
+          <p className="small plusNote">
+            🔒 {p("Με το Plus προσθέτετε έως 3 παιδιά, το καθένα με δικά του αστεράκια.", "With Plus you can add up to 3 children, each with their own stars.")}{" "}
+            <button className="linkBtn" onClick={() => go("plus")}>
+              {p("Δείτε το Plus →", "See Plus →")}
+            </button>
+          </p>
+        )}
+        {state.profiles.length < MAX_PROFILES && hasPlus(state) &&
           (adding ? (
             <div className="plusForm" style={{ marginTop: 10 }}>
               <label>
@@ -412,6 +414,11 @@ export function PlusProfiles() {
             </button>
           ))}
       </div>
+      <PlusGate
+        icon="👫"
+        title="Sibling Mode"
+        text={p("Δραστηριότητες που κάνουν μαζί δύο παιδιά διαφορετικών ηλικιών.", "Activities two children of different ages can do together.")}
+      >
       <div className="plusPanel">
         <h3>👫 Sibling Mode</h3>
         <p className="small">
@@ -443,6 +450,7 @@ export function PlusProfiles() {
         </div>
         {sib && <ResultCard a={sib} onAgain={() => setSib(siblingPick(sib1, sib2))} />}
       </div>
+      </PlusGate>
     </>
   )
 }

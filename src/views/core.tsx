@@ -3,6 +3,8 @@ import { ActivityMini, openActivity, SectionTitle } from "../components"
 import {
   activities,
   activityOfTheDay,
+  FREE,
+  isLocked,
   buildWeek,
   CATEGORIES,
   getActivity,
@@ -17,6 +19,7 @@ import { useCompleteActivity } from "../lib/rewards"
 import { StarsCard } from "./rewards"
 import { openTour } from "./intro"
 import { ToolsCard } from "./tools"
+import { PlusLock } from "./premium"
 import { canOfferInstall, InstallBanner, installApp } from "./install"
 import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
@@ -77,7 +80,7 @@ export function Home() {
           </button>
         ))}
       </div>
-      <SectionTitle badge="FREE">{t(l, "today")}</SectionTitle>
+      <SectionTitle>{t(l, "today")}</SectionTitle>
       <ActivityMini a={activityOfTheDay()} />
       <SectionTitle>{t(l, "find")}</SectionTitle>
       <div className="card2">
@@ -109,7 +112,60 @@ const RATINGS: [Rating, string][] = [
   ["no", "👎"],
 ]
 
+/** Locked Plus activities show a preview and the Plus card instead of the steps. */
 export function ActivityView({ id }: { id: number }) {
+  const { state } = useStore()
+  const a = getActivity(id)
+  const locked = !!a && isLocked(a)
+  void state.plus // re-render when Plus starts
+  return locked ? <LockedActivity a={a!} /> : <ActivityDetail key={id} id={id} />
+}
+
+function LockedActivity({ a }: { a: Activity }) {
+  const { state } = useStore()
+  const l = state.lang
+  return (
+    <>
+      <button className="back noprint" onClick={() => back()}>
+        ← {pick2(l, "Πίσω", "Back")}
+      </button>
+      <article className="activity-card">
+        <div className="heroEmoji">{a.emoji}</div>
+        <div>
+          <span className="pill">{label(l, TYPE_LABEL[a.types[0]])}</span>
+          <span className="plusBadge" style={{ marginLeft: 6 }}>👑 PLUS</span>
+          <h1>{actText.title(a, l)}</h1>
+          <p>{actText.desc(a, l)}</p>
+          <div className="meta">
+            <span>👶 {a.ages.join(", ")}</span>
+            <span>
+              ⏱️ {a.times.join("/")} {t(l, "minutes")}
+            </span>
+          </div>
+        </div>
+      </article>
+      <section className="info lockedSteps" aria-hidden>
+        <h2>🪄 {t(l, "steps")}</h2>
+        <ol>
+          {actText.steps(a, l).slice(0, 3).map((x, i) => (
+            <li key={i}>{x}</li>
+          ))}
+        </ol>
+      </section>
+      <PlusLock
+        icon="🔒"
+        title={pick2(l, "Αυτή η δραστηριότητα είναι στο Plus", "This activity is in Plus")}
+        text={pick2(
+          l,
+          `Με το Plus ανοίγουν και οι ${activities.length - FREE.length} δραστηριότητες Plus, μαζί με το PlayNest AI και τα packs.`,
+          `Plus unlocks all ${activities.length - FREE.length} Plus activities, plus PlayNest AI and the packs.`,
+        )}
+      />
+    </>
+  )
+}
+
+function ActivityDetail({ id }: { id: number }) {
   const { state, update, profile, toast } = useStore()
   const l = state.lang
   const a = getActivity(id)
@@ -355,7 +411,7 @@ export function Week() {
   }
   return (
     <>
-      <SectionTitle badge="PLUS">{t(l, "planner")}</SectionTitle>
+      <SectionTitle>{t(l, "planner")}</SectionTitle>
       <div className="card2 plusCard">
         <p>{t(l, "plannerSub")}</p>
         <button className="primary" onClick={generate}>
@@ -689,17 +745,19 @@ export function Explore({ initialCat }: { initialCat: string }) {
   const [cat, setCat] = useState(CATEGORIES.some((c) => c[0] === initialCat) ? initialCat : "all")
   const [q, setQ] = useState("")
   const [time, setTime] = useState("all")
+  const [onlyFree, setOnlyFree] = useState(false)
   const list = useMemo(() => {
     // Every word must match somewhere: title (both languages), description or materials.
     const words = norm(q.trim()).split(/\s+/).filter(Boolean)
     return activities.filter((a) => {
       if (cat !== "all" && !a.tags.includes(cat)) return false
       if (time !== "all" && !a.times.includes(time)) return false
+      if (onlyFree && a.premium) return false
       if (!words.length) return true
       const hay = norm(`${a.titleEl} ${a.titleEn} ${actText.desc(a, l)} ${actText.materials(a, l).join(" ")}`)
       return words.every((w) => hay.includes(w))
     })
-  }, [cat, q, l, time])
+  }, [cat, q, l, time, onlyFree])
   const chips = useRef<HTMLDivElement>(null)
   useEffect(() => {
     chips.current?.querySelector(".on")?.scrollIntoView({ block: "nearest", inline: "center" })
@@ -713,8 +771,8 @@ export function Explore({ initialCat }: { initialCat: string }) {
       <div className="exhead">
         <div>
           <b style={{ fontSize: 24, color: "#3da9b6" }}>PlayNest Explore</b>
-          <div>
-            {list.length} / {activities.length}
+          <div className="small">
+            {list.length} / {activities.length} · {FREE.length} {pick2(l, "δωρεάν", "free")} · {activities.length - FREE.length} 👑 Plus
           </div>
         </div>
         <button className="exclose" aria-label="close" onClick={() => back()}>
@@ -741,12 +799,15 @@ export function Explore({ initialCat }: { initialCat: string }) {
             ⏱ {x === "all" ? pick2(l, "Κάθε διάρκεια", "Any length") : `${x}'`}
           </button>
         ))}
+        <button className={onlyFree ? "on" : ""} onClick={() => setOnlyFree((v) => !v)}>
+          🆓 {pick2(l, `Δωρεάν (${FREE.length})`, `Free (${FREE.length})`)}
+        </button>
       </div>
       {list.length === 0 && <div className="card2">{t(l, "noResults")}</div>}
       <div className="exgrid">
         {list.map((a) => (
           <button key={a.id} className="excard" onClick={() => openActivity(a.id)}>
-            <span className={`exbadge ${a.premium ? "plus" : ""}`}>{a.premium ? "👑 PLUS" : "FREE"}</span>
+            <span className={`exbadge ${a.premium ? "plus" : ""}`}>{a.premium ? (isLocked(a) ? "🔒 PLUS" : "👑 PLUS") : pick2(l, "ΔΩΡΕΑΝ", "FREE")}</span>
             <div className="exart">{a.emoji}</div>
             <h3>{actText.title(a, l)}</h3>
             <div className="exmeta">

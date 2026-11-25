@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { isLocked } from "./lib/activities"
 import { actText, label, TYPE_LABEL } from "./lib/i18n"
 import { back, go } from "./lib/router"
 import { useStore } from "./lib/store"
@@ -15,6 +16,7 @@ export function ActivityMini({ a }: { a: Activity }) {
       <div className="em">{a.emoji}</div>
       <div>
         <span className="pill">{label(state.lang, TYPE_LABEL[a.types[0]])}</span>
+        {a.premium && <span className="miniPlus">{isLocked(a) ? "🔒" : "👑"} PLUS</span>}
         <h3>{actText.title(a, state.lang)}</h3>
         <div className="small">
           👶 {a.ages.join(", ")} • ⏱️ {a.times[0]}'
@@ -29,6 +31,7 @@ export function RecCard({ a, sub }: { a: Activity; sub?: string }) {
   return (
     <button className="recCard" onClick={() => openActivity(a.id)}>
       <div className="rEmoji">{a.emoji}</div>
+      {isLocked(a) && <span className="miniPlus">🔒 PLUS</span>}
       <b>{actText.title(a, state.lang)}</b>
       <div className="small">{sub ?? `${a.times[0]}' · ${a.ages.join(", ")}`}</div>
     </button>
