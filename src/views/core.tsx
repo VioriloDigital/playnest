@@ -602,7 +602,7 @@ export function ProfileEdit() {
 const SITE = "https://playnest.kosbouris.workers.dev"
 
 function About() {
-  const { state } = useStore()
+  const { state, update } = useStore()
   const l = state.lang
   return (
     <>
@@ -610,6 +610,9 @@ function About() {
       <div className="card2 aboutLinks">
         <button className="linkBtn aboutTour" onClick={openTour}>
           🧭 {pick2(l, "Ξενάγηση στην εφαρμογή", "App tour")}
+        </button>
+        <button className="linkBtn aboutTour" onClick={() => update((s) => ({ ...s, introSeen: false }))}>
+          👋 {pick2(l, "Οθόνη υποδοχής", "Welcome screen")}
         </button>
         <a href={`${SITE}/privacy.html`} target="_blank" rel="noopener">
           🔒 {pick2(l, "Πολιτική απορρήτου", "Privacy policy")}
