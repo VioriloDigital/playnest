@@ -14,17 +14,30 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
+export function newId(prefix = ""): string {
+  return `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
+}
+
 function cleanProfile(p: Partial<ChildProfile> | undefined): ChildProfile {
   return {
+    id: typeof p?.id === "string" && p.id ? p.id : newId("c"),
     name: typeof p?.name === "string" ? p.name : "",
     age: p?.age && AGES.includes(p.age) ? p.age : "3-4",
     interests: Array.isArray(p?.interests) ? p.interests : [],
+    rewards: Array.isArray(p?.rewards) ? p.rewards : [],
   }
+}
+
+/** Journal entries from before per-child stars belong to the child that was active. */
+function withChildIds(s: AppState): AppState {
+  const fallback = (s.profiles[s.active] ?? s.profiles[0]).id
+  if (s.log.every((e) => e.childId)) return s
+  return { ...s, log: s.log.map((e) => (e.childId ? e : { ...e, childId: fallback })) }
 }
 
 export const defaultState: AppState = {
   lang: "el",
-  profiles: [{ name: "", age: "3-4", interests: ["vehicle", "art"] }],
+  profiles: [{ id: "c-first", name: "", age: "3-4", interests: ["vehicle", "art"], rewards: [] }],
   active: 0,
   favs: [],
   week: [],
@@ -36,6 +49,8 @@ export const defaultState: AppState = {
   log: [],
   reminder: { on: false, time: "17:30" },
   aiActivities: [],
+  routines: [],
+  introSeen: false,
 }
 
 /** Load state, migrating data saved by PlayNest V1 (pn_* keys and playnest_plus_v2). */
@@ -49,13 +64,15 @@ export function loadState(): AppState {
       (saved.done ?? [])
         .filter((i) => typeof saved.week?.[i] === "number")
         .map((i) => ({ id: `w${i}`, actId: saved.week![i], date: new Date().toISOString(), weekDay: i }))
-    return {
+    return withChildIds({
       ...defaultState,
       ...saved,
+      // People who used the app before the welcome screen existed don't need it.
+      introSeen: saved.introSeen ?? true,
       log,
       profiles,
       active: Math.min(Math.max(saved.active ?? 0, 0), profiles.length - 1),
-    }
+    })
   }
 
   let lang: Lang = "el"
@@ -82,8 +99,9 @@ export function loadState(): AppState {
   // V1 edited `pn_profile` from the profile screen; it is the freshest copy of the active child.
   if (legacyProfile && plus?.profiles?.length) profiles[active] = cleanProfile(legacyProfile)
 
-  return {
+  return withChildIds({
     ...defaultState,
+    introSeen: !!(legacyProfile || plus),
     lang,
     profiles,
     active,
@@ -96,10 +114,20 @@ export function loadState(): AppState {
     challenge: plus?.challenge?.length === 7 ? plus.challenge : defaultState.challenge,
     snapTags: plus?.snapTags ?? [],
     aiHistory: plus?.aiHistory ?? [],
-  }
+  })
+}
+
+/** Full-screen "well done" moment after a child finishes an activity. */
+export interface Celebration {
+  name: string
+  stars: number
+  sticker?: { emoji: string; el: string; en: string }
+  reward?: { emoji: string; title: string }
 }
 
 interface Store {
+  celebration: Celebration | null
+  celebrate: (c: Celebration | null) => void
   state: AppState
   update: (fn: (s: AppState) => AppState) => void
   profile: ChildProfile
@@ -112,6 +140,7 @@ const Ctx = createContext<Store | null>(null)
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AppState>(loadState)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
+  const [celebration, celebrate] = useState<Celebration | null>(null)
   const timer = useRef<number | undefined>(undefined)
 
   registerCustom(state.aiActivities)
@@ -137,8 +166,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       profile: state.profiles[state.active] ?? state.profiles[0],
       toast,
       toastMsg,
+      celebration,
+      celebrate,
     }),
-    [state, toast, toastMsg],
+    [state, toast, toastMsg, celebration],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

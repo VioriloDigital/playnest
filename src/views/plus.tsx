@@ -13,8 +13,8 @@ import {
 import { actText, pick2 } from "../lib/i18n"
 import { go } from "../lib/router"
 import { aiActivity, AIError, aiErrorText, aiSnap, photoToJpeg } from "../lib/ai"
-import { useStore } from "../lib/store"
-import { AGES, MAX_PROFILES, type ActType, type Activity, type Age, type AppState, type Place } from "../lib/types"
+import { newId, useStore } from "../lib/store"
+import { AGES, MAX_PROFILES, type ActType, type Activity, type Age, type AppState, type Place, AVATARS } from "../lib/types"
 
 export function PlusHome() {
   const { state, profile } = useStore()
@@ -336,7 +336,7 @@ export function PlusProfiles() {
   const add = () => {
     update((s) => ({
       ...s,
-      profiles: [...s.profiles, { name: name.trim(), age, interests: [] }],
+      profiles: [...s.profiles, { id: newId("c"), name: name.trim(), age, interests: [], rewards: [] }],
       active: s.profiles.length,
     }))
     setAdding(false)
@@ -357,7 +357,7 @@ export function PlusProfiles() {
       <div className="plusPanel">
         {state.profiles.map((pr, i) => (
           <div key={i} className={`profileRow ${i === state.active ? "active" : ""}`}>
-            <div className="profileAvatar">{["🧒", "👧", "👦"][i] ?? "🧒"}</div>
+            <div className="profileAvatar">{AVATARS[i] ?? "🐥"}</div>
             <div>
               <b>{pr.name || p(`Παιδί ${i + 1}`, `Child ${i + 1}`)}</b>
               <div className="small">

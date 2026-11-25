@@ -12,19 +12,23 @@ import {
   type QuickKey,
 } from "../lib/activities"
 import { actText, DAYS, greeting, label, PLACE_LABEL, pick2, t, TYPE_LABEL } from "../lib/i18n"
-import { addEntry, BADGES, dayKey, removeEntry, stats } from "../lib/journal"
+import { BADGES, dayKey, removeEntry, stats } from "../lib/journal"
+import { useCompleteActivity } from "../lib/rewards"
+import { StarsCard } from "./rewards"
+import { openTour } from "./intro"
+import { ToolsCard } from "./tools"
 import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
 import { back, go } from "../lib/router"
 import { useStore } from "../lib/store"
-import { AGES, INTERESTS, type ActType, type Activity, type Age, type Interest, type LogEntry, type Rating } from "../lib/types"
+import { AGES, INTERESTS, type ActType, type Activity, type Age, type Interest, type LogEntry, type Rating, AVATARS } from "../lib/types"
 
 export function ProfileCard() {
   const { state, profile } = useStore()
   const l = state.lang
   return (
     <div className="card2 row">
-      <div className="avatar">{["🧒", "👧", "👦"][state.active] ?? "🧒"}</div>
+      <div className="avatar">{AVATARS[state.active] ?? "🐥"}</div>
       <div style={{ flex: 1 }}>
         <div className="small">{t(l, "profile")}</div>
         <b>{profile.name || t(l, "myChild")}</b>
@@ -61,6 +65,8 @@ export function Home() {
         {t(l, "explore")}
       </button>
       <ProfileCard />
+      <StarsCard />
+      <ToolsCard />
       <SectionTitle>{t(l, "quick")}</SectionTitle>
       <div className="chips">
         {QUICK.map((k) => (
@@ -123,11 +129,11 @@ export function ActivityView({ id }: { id: number }) {
   const [note, setNote] = useState("")
   const [doneRating, setDoneRating] = useState<Rating | undefined>(rating)
   const timesDone = state.log.filter((e) => e.actId === a.id).length
+  const complete = useCompleteActivity()
   const saveDone = () => {
-    update((s) => addEntry(s, { actId: a.id, note: note.trim(), rating: doneRating }))
+    complete({ actId: a.id, note: note.trim(), rating: doneRating })
     setDoneOpen(false)
     setNote("")
-    toast(pick2(l, "Μπράβο! Καταγράφηκε στο ημερολόγιο 🎉", "Well done! Added to your journal 🎉"))
   }
   const share = async () => {
     const text = activityText(a, l)
@@ -332,15 +338,19 @@ export function Week() {
       const log = s.log.map((e) => (e.weekDay === i ? { ...e, weekDay: undefined } : e))
       return { ...s, week, log, done: s.done.filter((x) => x !== i) }
     })
-  const mark = (i: number) =>
-    update((s) => {
-      if (s.done.includes(i)) {
+  const complete = useCompleteActivity()
+  const mark = (i: number) => {
+    if (state.done.includes(i)) {
+      update((s) => {
         const entry = s.log.find((e) => e.weekDay === i && e.actId === s.week[i])
         const next = entry ? removeEntry(s, entry.id) : s
         return { ...next, done: s.done.filter((x) => x !== i) }
-      }
-      return { ...addEntry(s, { actId: s.week[i], weekDay: i }), done: [...s.done, i] }
-    })
+      })
+    } else {
+      complete({ actId: state.week[i], weekDay: i })
+      update((s) => ({ ...s, done: [...s.done, i] }))
+    }
+  }
   return (
     <>
       <SectionTitle badge="PLUS">{t(l, "planner")}</SectionTitle>
@@ -456,6 +466,7 @@ export function Progress() {
   return (
     <>
       <SectionTitle>📊 {t(l, "progress")}</SectionTitle>
+      <StarsCard />
       <div className="card2 streakCard">
         <div className="streakNum">🔥 {st.streak}</div>
         <div>
@@ -546,7 +557,7 @@ export function ProfileEdit() {
   const save = () => {
     update((s) => {
       const profiles = [...s.profiles]
-      profiles[s.active] = { name: name.trim(), age, interests: ints }
+      profiles[s.active] = { ...profiles[s.active], name: name.trim(), age, interests: ints }
       return { ...s, profiles }
     })
     toast(t(l, "saved"))
@@ -591,12 +602,18 @@ export function ProfileEdit() {
 const SITE = "https://playnest.kosbouris.workers.dev"
 
 function About() {
-  const { state } = useStore()
+  const { state, update } = useStore()
   const l = state.lang
   return (
     <>
       <SectionTitle>ℹ️ {pick2(l, "Σχετικά", "About")}</SectionTitle>
       <div className="card2 aboutLinks">
+        <button className="linkBtn aboutTour" onClick={openTour}>
+          🧭 {pick2(l, "Ξενάγηση στην εφαρμογή", "App tour")}
+        </button>
+        <button className="linkBtn aboutTour" onClick={() => update((s) => ({ ...s, introSeen: false }))}>
+          👋 {pick2(l, "Οθόνη υποδοχής", "Welcome screen")}
+        </button>
         <a href={`${SITE}/privacy.html`} target="_blank" rel="noopener">
           🔒 {pick2(l, "Πολιτική απορρήτου", "Privacy policy")}
         </a>

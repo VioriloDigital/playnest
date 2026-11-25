@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { getActivity } from "../lib/activities"
 import { actText, pick2 } from "../lib/i18n"
-import { addEntry } from "../lib/journal"
+import { useCompleteActivity } from "../lib/rewards"
 import { back, go } from "../lib/router"
 import { useStore } from "../lib/store"
 
@@ -32,7 +32,8 @@ function useWakeLock(active: boolean) {
 }
 
 export function PlayMode({ id }: { id: number }) {
-  const { state, update, toast } = useStore()
+  const { state } = useStore()
+  const complete = useCompleteActivity()
   const l = state.lang
   const a = getActivity(id)
   const [step, setStep] = useState(-1) // -1 = materials checklist
@@ -77,8 +78,7 @@ export function PlayMode({ id }: { id: number }) {
   const mats = actText.materials(a, l)
   const last = step === steps.length - 1
   const finish = () => {
-    update((s) => addEntry(s, { actId: a.id }))
-    toast(pick2(l, "Μπράβο! Καταγράφηκε στο ημερολόγιο 🎉", "Well done! Added to your journal 🎉"))
+    complete({ actId: a.id })
     go(`activity/${a.id}`, true)
   }
 

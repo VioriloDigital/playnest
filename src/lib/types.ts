@@ -35,10 +35,23 @@ export interface Activity {
   ai?: boolean
 }
 
+/** A reward the parent sets up, e.g. "10 stars = a trip to the park". */
+export interface Reward {
+  id: string
+  emoji: string
+  title: string
+  cost: number
+  /** ISO date when the child claimed it; a claimed reward's stars are spent. */
+  redeemedAt?: string
+}
+
 export interface ChildProfile {
+  /** Stable id: journal entries and rewards point to it, so deleting another child doesn't shift them. */
+  id: string
   name: string
   age: Age
   interests: Interest[]
+  rewards: Reward[]
 }
 
 export type Rating = "love" | "ok" | "no"
@@ -53,12 +66,22 @@ export interface LogEntry {
   rating?: Rating
   /** Set when the entry came from ticking a day in the weekly plan. */
   weekDay?: number
+  /** The child (ChildProfile.id) who did it; earns that child a star. */
+  childId?: string
 }
 
 export interface Reminder {
   on: boolean
   /** "HH:MM", 24-hour. */
   time: string
+}
+
+/** A picture routine for the "Now → Next" tool (e.g. morning, bedtime). */
+export interface Routine {
+  id: string
+  emoji: string
+  name: string
+  items: { emoji: string; label: string }[]
 }
 
 export interface AppState {
@@ -78,6 +101,10 @@ export interface AppState {
   reminder: Reminder
   /** Activities created by PlayNest AI, newest first. */
   aiActivities: Activity[]
+  /** Picture routines (Tools → Now & Next). Empty means "use the defaults for the language". */
+  routines: Routine[]
+  /** False until the welcome screen has been completed (or skipped) once. */
+  introSeen: boolean
 }
 
 export const AGES: Age[] = ["1-2", "2-3", "3-4", "4-6", "6-8"]
@@ -92,3 +119,6 @@ export const INTERESTS: Interest[] = [
   "numbers",
 ]
 export const MAX_PROFILES = 3
+
+/** Profile avatars by position: friendly animals, so no child is given a gender. */
+export const AVATARS = ["🐥", "🦊", "🐼"]
