@@ -103,6 +103,8 @@ export interface AppState {
   aiActivities: Activity[]
   /** Picture routines (Tools → Now & Next). Empty means "use the defaults for the language". */
   routines: Routine[]
+  /** False until the welcome screen has been completed (or skipped) once. */
+  introSeen: boolean
 }
 
 export const AGES: Age[] = ["1-2", "2-3", "3-4", "4-6", "6-8"]

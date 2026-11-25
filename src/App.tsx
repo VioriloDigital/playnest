@@ -6,6 +6,7 @@ import { onReminderTap, syncReminders } from "./lib/reminder"
 import { useStore } from "./lib/store"
 import { PlayMode } from "./views/play"
 import { CelebrationOverlay, Diploma, Rewards } from "./views/rewards"
+import { Intro, openTour, Tour } from "./views/intro"
 import { Breathing, FeelingsWheel, RoutineTool, ToolsHome, VisualTimer } from "./views/tools"
 import { ActivityView, Explore, Favorites, Home, Progress, ProfileEdit, Week } from "./views/core"
 import {
@@ -112,6 +113,9 @@ export default function App() {
         <button className="logo" onClick={() => goTab("")} aria-label="PlayNest">
           <img src={logo} alt="PlayNest" width={120} height={120} />
         </button>
+        <button className="helpBtn" onClick={openTour} aria-label={l === "el" ? "Ξενάγηση" : "Tour"} title={l === "el" ? "Ξενάγηση" : "Tour"}>
+          ❓
+        </button>
         <button
           className="lang"
           onClick={() => update((s) => ({ ...s, lang: s.lang === "el" ? "en" : "el" }))}
@@ -136,6 +140,8 @@ export default function App() {
         </div>
       )}
       <CelebrationOverlay />
+      <Tour />
+      <Intro />
       <BackHandler />
     </div>
   )

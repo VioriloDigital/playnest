@@ -50,6 +50,7 @@ export const defaultState: AppState = {
   reminder: { on: false, time: "17:30" },
   aiActivities: [],
   routines: [],
+  introSeen: false,
 }
 
 /** Load state, migrating data saved by PlayNest V1 (pn_* keys and playnest_plus_v2). */
@@ -66,6 +67,8 @@ export function loadState(): AppState {
     return withChildIds({
       ...defaultState,
       ...saved,
+      // People who used the app before the welcome screen existed don't need it.
+      introSeen: saved.introSeen ?? true,
       log,
       profiles,
       active: Math.min(Math.max(saved.active ?? 0, 0), profiles.length - 1),
@@ -98,6 +101,7 @@ export function loadState(): AppState {
 
   return withChildIds({
     ...defaultState,
+    introSeen: !!(legacyProfile || plus),
     lang,
     profiles,
     active,

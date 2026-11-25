@@ -15,6 +15,7 @@ import { actText, DAYS, greeting, label, PLACE_LABEL, pick2, t, TYPE_LABEL } fro
 import { BADGES, dayKey, removeEntry, stats } from "../lib/journal"
 import { useCompleteActivity } from "../lib/rewards"
 import { StarsCard } from "./rewards"
+import { openTour } from "./intro"
 import { ToolsCard } from "./tools"
 import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
@@ -607,6 +608,9 @@ function About() {
     <>
       <SectionTitle>ℹ️ {pick2(l, "Σχετικά", "About")}</SectionTitle>
       <div className="card2 aboutLinks">
+        <button className="linkBtn aboutTour" onClick={openTour}>
+          🧭 {pick2(l, "Ξενάγηση στην εφαρμογή", "App tour")}
+        </button>
         <a href={`${SITE}/privacy.html`} target="_blank" rel="noopener">
           🔒 {pick2(l, "Πολιτική απορρήτου", "Privacy policy")}
         </a>
