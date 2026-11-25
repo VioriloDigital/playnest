@@ -17,6 +17,7 @@ import { useCompleteActivity } from "../lib/rewards"
 import { StarsCard } from "./rewards"
 import { openTour } from "./intro"
 import { ToolsCard } from "./tools"
+import { canOfferInstall, InstallBanner, installApp } from "./install"
 import { reportActivity } from "../lib/ai"
 import { remindersSupported, syncReminders } from "../lib/reminder"
 import { back, go } from "../lib/router"
@@ -65,6 +66,7 @@ export function Home() {
         {t(l, "explore")}
       </button>
       <ProfileCard />
+      <InstallBanner />
       <StarsCard />
       <ToolsCard />
       <SectionTitle>{t(l, "quick")}</SectionTitle>
@@ -614,6 +616,11 @@ function About() {
         <button className="linkBtn aboutTour" onClick={() => update((s) => ({ ...s, introSeen: false }))}>
           👋 {pick2(l, "Οθόνη υποδοχής", "Welcome screen")}
         </button>
+        {canOfferInstall() && (
+          <button className="linkBtn aboutTour" onClick={() => installApp()}>
+            📲 {pick2(l, "Εγκατάσταση ως εφαρμογή", "Install as an app")}
+          </button>
+        )}
         <a href={`${SITE}/privacy.html`} target="_blank" rel="noopener">
           🔒 {pick2(l, "Πολιτική απορρήτου", "Privacy policy")}
         </a>

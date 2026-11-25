@@ -225,3 +225,51 @@ header .helpBtn { position: absolute; left: 20px; top: calc(24px + var(--sat)); 
 .tourNav button:disabled { opacity: .4; }
 .aboutTour { font-size: 15px; }
 .tourNav { grid-template-columns: 1fr 1.4fr !important; }
+
+/* Install banner / page */
+.installBanner { display: flex; align-items: center; gap: 12px; position: relative; border-color: #c7d2fe; background: linear-gradient(135deg, #eef2ff, #f0fdfa); }
+.ibIcon { font-size: 30px; }
+.ibClose { position: absolute; top: 4px; right: 6px; border: 0; background: none; color: #94a3b8; font-size: 13px; padding: 4px; }
+.installSteps h3 { margin: 0 0 6px; }
+.installSteps ol { margin: 0; padding-left: 20px; line-height: 1.8; }
+.installSteps.here { border: 2px solid #15bca6; }
+.kbd { display: inline-block; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0 6px; background: #f8fafc; }
+
+/* Computer layout: side menu, wider content */
+@media (min-width: 1024px) {
+  body { background: linear-gradient(90deg, #fff 0 250px, #fbfaf6 250px); }
+  .app { max-width: none; padding: 0 0 40px 250px; }
+  .app::before { content: ""; position: fixed; left: 0; top: 0; bottom: 0; width: 250px; background: #fff; border-right: 1px solid #edf1f2; z-index: 9; }
+  header { position: fixed; left: 0; top: 0; width: 250px; z-index: 11; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 26px 16px 10px; }
+  header .logo { width: 100%; display: flex; justify-content: center; }
+  header .logo img { width: 112px; height: 112px; }
+  header p { width: 100%; order: 1; padding: 0 !important; font-size: 13px; }
+  header .helpBtn, header .lang { position: static; order: 2; }
+  nav { position: fixed; left: 0; top: 270px; bottom: auto; transform: none; width: 250px; height: auto; max-width: none; display: flex !important; flex-direction: column; gap: 4px; padding: 0 14px; background: transparent; border: 0; backdrop-filter: none; z-index: 11; }
+  nav button { flex-direction: row; justify-content: flex-start; gap: 12px; font-size: 16px !important; padding: 12px 16px; border-radius: 14px; }
+  nav button:hover { background: #f4f8f8; }
+  nav button.active { background: #eafbf7; }
+  main { max-width: 1060px; margin: 0 auto; padding: 32px 36px; }
+  .chips, .exfilters { flex-wrap: wrap; overflow: visible; }
+  .hero2 { padding: 34px 38px; }
+  .hero2 h1 { font-size: 36px; }
+  .hero2 .primary { max-width: 360px; }
+  .recGrid, .plusGridV2, .packGrid { grid-template-columns: repeat(4, 1fr) !important; }
+  .album { grid-template-columns: repeat(8, 1fr); }
+  .stats { grid-template-columns: repeat(4, 1fr) !important; }
+  .miniStatGrid { grid-template-columns: repeat(4, 1fr) !important; }
+  .grid2 { grid-template-columns: 1fr 1fr !important; }
+  .exgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .week { grid-template-columns: 1fr 1fr; }
+  .play, .timerTool, .breathStage, .feelStage { max-width: 760px; margin-left: auto; margin-right: auto; }
+  .nowNext { max-width: 760px; margin: 12px auto 0; }
+  .nnEmoji { font-size: 110px; }
+  .toast { left: calc(50% + 125px); bottom: 30px; }
+  .activity-card { grid-template-columns: 240px 1fr; }
+  .heroEmoji { min-height: 220px; font-size: 110px; }
+  .diploma { max-width: 760px; margin: 16px auto; }
+  .rewardHero { padding: 30px; }
+}
+@media (min-width: 1400px) {
+  .exgrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
