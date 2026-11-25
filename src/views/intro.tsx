@@ -24,12 +24,12 @@ const SLIDES: Slide[] = [
     el: {
       title: "Καλώς ήρθατε στο PlayNest",
       text: "Ιδέες παιχνιδιού για παιδιά 1–8 ετών, για κάθε στιγμή της μέρας. Δείτε σε ένα λεπτό τι μπορείτε να κάνετε.",
-      points: ["200 δραστηριότητες με υλικά, δεξιότητες και βήματα", "Αστεράκια και αυτοκόλλητα για τα παιδιά", "Χωρίς λογαριασμό: όλα μένουν στη συσκευή σας"],
+      points: ["50 δωρεάν δραστηριότητες και 150 ακόμη με το Plus", "Αστεράκια και αυτοκόλλητα για τα παιδιά", "Χωρίς λογαριασμό: όλα μένουν στη συσκευή σας"],
     },
     en: {
       title: "Welcome to PlayNest",
       text: "Play ideas for children aged 1–8, for every moment of the day. Here's what you can do, in one minute.",
-      points: ["200 activities with materials, skills and steps", "Stars and stickers for the children", "No account: everything stays on your device"],
+      points: ["50 free activities and 150 more with Plus", "Stars and stickers for the children", "No account: everything stays on your device"],
     },
   },
   {
@@ -140,14 +140,14 @@ const SLIDES: Slide[] = [
     to: "plus",
     el: {
       title: "PlayNest Plus",
-      text: "Έξυπνα εργαλεία, δωρεάν κατά τη δοκιμαστική περίοδο.",
-      points: ["PlayNest AI: νέα δραστηριότητα από όσα έχετε στο σπίτι", "Snap & Play: φωτογραφία → ιδέες παιχνιδιού", "Έως 3 παιδιά και κοινές δραστηριότητες για αδέλφια"],
+      text: "Όλες οι 200 δραστηριότητες και έξυπνα εργαλεία. Δοκιμάστε το δωρεάν για 7 μέρες.",
+      points: ["150 επιπλέον δραστηριότητες, STEM και packs", "PlayNest AI: νέα δραστηριότητα από όσα έχετε στο σπίτι", "Snap & Play: φωτογραφία → ιδέες παιχνιδιού", "Έως 3 παιδιά και κοινές δραστηριότητες για αδέλφια"],
       cta: "Plus",
     },
     en: {
       title: "PlayNest Plus",
-      text: "Smart tools, free during the trial period.",
-      points: ["PlayNest AI: a new activity from what you have at home", "Snap & Play: photo → play ideas", "Up to 3 children and shared activities for siblings"],
+      text: "All 200 activities and smart tools. Try it free for 7 days.",
+      points: ["150 more activities, STEM and packs", "PlayNest AI: a new activity from what you have at home", "Snap & Play: photo → play ideas", "Up to 3 children and shared activities for siblings"],
       cta: "Plus",
     },
   },

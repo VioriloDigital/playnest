@@ -105,6 +105,15 @@ export interface AppState {
   routines: Routine[]
   /** False until the welcome screen has been completed (or skipped) once. */
   introSeen: boolean
+  /** PlayNest Plus on this device. */
+  plus: PlusState
+}
+
+export interface PlusState {
+  /** ISO date the free trial started (one per device). */
+  trialStart?: string
+  /** ISO date until which a purchased subscription is valid (set by billing, once connected). */
+  paidUntil?: string
 }
 
 export const AGES: Age[] = ["1-2", "2-3", "3-4", "4-6", "6-8"]

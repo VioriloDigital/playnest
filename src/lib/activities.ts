@@ -2,9 +2,25 @@ import raw from "../data/activities.json"
 import type { ActType, Activity, Age, ChildProfile, Interest, Place } from "./types"
 
 export const activities = raw as Activity[]
+export const FREE = activities.filter((a) => !a.premium)
 const byId = new Map(activities.map((a) => [a.id, a]))
 
 let custom = new Map<number, Activity>()
+let premiumAccess = false
+
+/** Whether Plus activities may be suggested (called by the store on every render). */
+export function setPremiumAccess(on: boolean): void {
+  premiumAccess = on
+}
+
+export function isLocked(a: Activity): boolean {
+  return a.premium && !premiumAccess
+}
+
+/** Activities this user can open: everything with Plus, the free ones without. */
+function available(): Activity[] {
+  return premiumAccess ? activities : FREE
+}
 
 /** Make AI-created activities resolvable by id (called by the store on every render). */
 export function registerCustom(list: Activity[]): void {
@@ -52,16 +68,18 @@ export function pickActivity(f: Filter = {}): Activity {
     { age: f.age },
     {},
   ]
+  const all = available()
   for (const attempt of attempts) {
-    const pool = activities.filter((a) => !exclude.has(a.id) && matches(a, attempt))
+    const pool = all.filter((a) => !exclude.has(a.id) && matches(a, attempt))
     if (pool.length) return randomOf(pool)
   }
-  return randomOf(activities)
+  return randomOf(all)
 }
 
 export function activityOfTheDay(now = new Date()): Activity {
   const key = now.getFullYear() * 372 + now.getMonth() * 31 + now.getDate()
-  return activities[key % activities.length]
+  const all = available()
+  return all[key % all.length]
 }
 
 export type QuickKey = "rain" | "nomat" | "ten" | "energy" | "bed" | "car" | "rest"
@@ -144,8 +162,8 @@ export function snapSuggest(keys: string[], count = 3): Activity[] {
 }
 
 export function siblingPick(a1: Age, a2: Age): Activity {
-  let pool = activities.filter((a) => a.ages.includes(a1) && a.ages.includes(a2))
-  if (!pool.length) pool = activities.filter((a) => a.ages.includes(a1) || a.ages.includes(a2))
+  let pool = available().filter((a) => a.ages.includes(a1) && a.ages.includes(a2))
+  if (!pool.length) pool = available().filter((a) => a.ages.includes(a1) || a.ages.includes(a2))
   return randomOf(pool)
 }
 

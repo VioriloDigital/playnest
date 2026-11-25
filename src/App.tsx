@@ -8,6 +8,7 @@ import { PlayMode } from "./views/play"
 import { CelebrationOverlay, Diploma, Rewards } from "./views/rewards"
 import { Intro, openTour, Tour } from "./views/intro"
 import { InstallView } from "./views/install"
+import { PlusGate } from "./views/premium"
 import { Breathing, FeelingsWheel, RoutineTool, ToolsHome, VisualTimer } from "./views/tools"
 import { ActivityView, Explore, Favorites, Home, Progress, ProfileEdit, Week } from "./views/core"
 import {
@@ -37,6 +38,16 @@ const PLUS_VIEWS: Record<string, () => React.JSX.Element> = {
   challenge: PlusChallenge,
   progress: PlusProgress,
   printables: PlusPrintables,
+}
+
+/** Lock cards for the Plus tools: icon, title el/en, text el/en. */
+const PLUS_LOCKS: Record<string, [string, string, string, string, string]> = {
+  ai: ["🤖", "PlayNest AI", "PlayNest AI", "Γράψτε τι έχετε στο σπίτι και το AI φτιάχνει μια καινούργια δραστηριότητα, ειδικά για την ηλικία του παιδιού.", "Type what you have at home and the AI creates a brand-new activity for your child's age."],
+  snap: ["📸", "Snap & Play", "Snap & Play", "Φωτογραφίστε ό,τι έχετε μπροστά σας και πάρτε 2 ιδέες παιχνιδιού με αυτά.", "Photograph what's in front of you and get 2 play ideas with it."],
+  packs: ["🧰", "Premium Packs", "Premium Packs", "Έτοιμες συλλογές για ταξίδι, βροχή, STEM, οικογένεια και άλλα.", "Ready-made collections for travel, rainy days, STEM, family and more."],
+  challenge: ["🏆", "7-Day Challenge", "7-Day Challenge", "Μία μικρή αποστολή κάθε μέρα για μια εβδομάδα γεμάτη παιχνίδι.", "One small mission a day for a week full of play."],
+  progress: ["📈", "Advanced Progress", "Advanced Progress", "Συνήθειες παιχνιδιού, ποικιλία και πρόοδος με μια ματιά.", "Play habits, variety and progress at a glance."],
+  printables: ["🖨️", "Printables", "Printables", "Κάρτες δραστηριοτήτων για εκτύπωση και παιχνίδι μακριά από την οθόνη.", "Printable activity cards for screen-free play."],
 }
 
 export default function App() {
@@ -97,7 +108,16 @@ export default function App() {
       break
     case "plus": {
       const V = sub ? PLUS_VIEWS[sub] : PlusHome
-      view = V ? <V /> : <PlusHome />
+      const lock = sub && sub !== "profiles" ? PLUS_LOCKS[sub] : undefined
+      view = !V ? (
+        <PlusHome />
+      ) : lock ? (
+        <PlusGate icon={lock[0]} title={l === "el" ? lock[1] : lock[2]} text={l === "el" ? lock[3] : lock[4]}>
+          <V />
+        </PlusGate>
+      ) : (
+        <V />
+      )
       break
     }
     default:
