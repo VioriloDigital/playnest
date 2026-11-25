@@ -1,6 +1,6 @@
-/** Seasonal themes on the Greek calendar. Activities carry the tag `season:<key>`. */
+/** Seasonal themes on the Greek calendar (plus Halloween). Activities carry the tag `season:<key>`. */
 
-export type ThemeKey = "autumn" | "christmas" | "newyear" | "winter" | "carnival" | "spring" | "easter" | "summer" | "school"
+export type ThemeKey = "autumn" | "halloween" | "christmas" | "newyear" | "winter" | "carnival" | "spring" | "easter" | "summer" | "school"
 
 export interface Theme {
   key: ThemeKey
@@ -15,6 +15,7 @@ export interface Theme {
 
 export const THEMES: Theme[] = [
   { key: "autumn", emoji: "🍂", el: "Φθινόπωρο", en: "Autumn", color: ["#fde68a", "#fdba74"], event: false },
+  { key: "halloween", emoji: "🎃", el: "Halloween", en: "Halloween", color: ["#fed7aa", "#ddd6fe"], event: true },
   { key: "christmas", emoji: "🎄", el: "Χριστούγεννα", en: "Christmas", color: ["#bbf7d0", "#fecaca"], event: true },
   { key: "newyear", emoji: "🥧", el: "Πρωτοχρονιά & Φώτα", en: "New Year & Epiphany", color: ["#fef3c7", "#bae6fd"], event: true },
   { key: "winter", emoji: "❄️", el: "Χειμώνας", en: "Winter", color: ["#e0f2fe", "#c7d2fe"], event: false },
@@ -46,6 +47,8 @@ function windowsFor(key: ThemeKey, year: number): [Date, Date][] {
   switch (key) {
     case "autumn":
       return [[day(year, 9, 23), day(year, 11, 30)]]
+    case "halloween":
+      return [[day(year, 10, 20), day(year, 10, 31)]]
     case "christmas":
       return [[day(year, 12, 1), day(year, 12, 26)]]
     case "newyear":
