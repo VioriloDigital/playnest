@@ -1,0 +1,10 @@
+{
+  // PlayNest Family: the site that presents PlayNest, PlayNest Skills and PlayNest Pro.
+  // Deploy: node family/embed.mjs && npx wrangler deploy -c family/wrangler.jsonc
+  "name": "playnest-family",
+  "account_id": "eea9b01d768c47bcb3798afa3376c968",
+  "main": "worker.js",
+  "compatibility_date": "2026-05-15",
+  "workers_dev": true,
+  "preview_urls": false
+}

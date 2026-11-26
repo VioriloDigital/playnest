@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PlayNest Family · Εφαρμογές για παιδιά, γονείς και ειδικούς</title>
+<meta name="description" content="Τρεις εφαρμογές που δουλεύουν μαζί: PlayNest για καθημερινό παιχνίδι, PlayNest Skills για δεξιότητες και PlayNest Pro για θεραπευτές και ειδικούς.">
+<meta property="og:title" content="PlayNest Family">
+<meta property="og:description" content="Παιχνίδι, δεξιότητες και θεραπεία: τρεις εφαρμογές, μία οικογένεια.">
+<meta property="og:image" content="/img/og.png">
+<meta name="theme-color" content="#fffaf3">
+<link rel="icon" href="/img/favicon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14213a;--muted:#55627a;--line:#ebeef3;--bg:#fffaf3;--card:#fff;
+  --pn:#15bca6;--pn2:#0e9a87;--pnbg:#e6faf6;
+  --sk:#7457c8;--sk2:#5e43b5;--skbg:#f1ecff;
+  --pr:#4f46e5;--pr2:#1e2a5a;--prbg:#eceeff;
+  --sun:#ffae24;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+h1,h2,h3{letter-spacing:-.025em;line-height:1.08}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+
+/* header */
+header{position:sticky;top:0;z-index:20;background:#fffaf3e6;backdrop-filter:blur(12px);border-bottom:1px solid #f1e9dc}
+.nav{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;text-decoration:none;letter-spacing:-.02em}
+.brand small{font-weight:700;color:var(--muted);font-size:13px;letter-spacing:0}
+.dots{display:flex}
+.dots i{width:18px;height:18px;border-radius:50%;border:2.5px solid #fffaf3;margin-left:-6px}
+.dots i:first-child{margin-left:0;background:var(--pn)}.dots i:nth-child(2){background:var(--sk)}.dots i:nth-child(3){background:var(--pr)}
+.links{display:flex;gap:26px;font-weight:700;font-size:15px}
+.links a{text-decoration:none;color:var(--muted)}.links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 22px;font-weight:800;font-size:15px;text-decoration:none;border:0;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.dark{background:var(--ink);color:#fff;box-shadow:0 10px 24px #14213a2a}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
+@media(max-width:820px){.links{display:none}}
+
+/* hero */
+.hero{padding:72px 0 40px;text-align:center;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(10px);z-index:-1}
+.hero::before{width:520px;height:520px;left:-160px;top:-120px;background:radial-gradient(circle,#15bca633,transparent 65%)}
+.hero::after{width:560px;height:560px;right:-180px;top:20px;background:radial-gradient(circle,#7457c833,transparent 65%)}
+.hero h1{font-size:clamp(38px,6.4vw,72px);font-weight:900;max-width:900px;margin:18px auto 0}
+.hero h1 .g{background:linear-gradient(90deg,var(--pn),var(--sk) 55%,var(--pr));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:clamp(17px,2.1vw,21px);color:var(--muted);font-weight:600;max-width:680px;margin:20px auto 0}
+.hero .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.trio{display:flex;justify-content:center;gap:clamp(14px,4vw,44px);margin-top:54px;flex-wrap:wrap}
+.trio a{display:flex;flex-direction:column;align-items:center;gap:12px;text-decoration:none;font-weight:800;font-size:15px}
+.trio img{width:clamp(84px,13vw,124px);height:clamp(84px,13vw,124px);border-radius:28%;box-shadow:0 18px 40px #14213a26;transition:transform .2s}
+.trio a:hover img{transform:translateY(-4px) rotate(-2deg)}
+.trio span{font-size:13px;font-weight:700;color:var(--muted);margin-top:-8px}
+
+/* sections */
+section{padding:84px 0}
+.sh{text-align:center;max-width:720px;margin:0 auto 46px}
+.sh h2{font-size:clamp(30px,4.4vw,48px);font-weight:900;margin-top:12px}
+.sh p{color:var(--muted);font-weight:600;font-size:18px;margin-top:14px}
+
+/* app blocks */
+.app{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;padding:56px;border-radius:40px;margin-bottom:34px;position:relative;overflow:hidden}
+.app.rev{grid-template-columns:1fr 1.05fr}
+.app.rev .copy{order:2}
+.app.pn{background:linear-gradient(150deg,#f0fdfa,#fff7e6)}
+.app.sk{background:linear-gradient(150deg,#f6f1ff,#fff0f6)}
+.app.pr{background:linear-gradient(150deg,#1b2350,#2a2f7a);color:#fff}
+.app .head{display:flex;align-items:center;gap:16px}
+.app .head img{width:68px;height:68px;border-radius:20px;box-shadow:0 10px 24px #14213a26}
+.app .head b{display:block;font-size:26px;font-weight:900;letter-spacing:-.02em;line-height:1.1}
+.app .head span{font-size:14px;font-weight:800}
+.pn .head span{color:var(--pn2)}.sk .head span{color:var(--sk)}.pr .head span{color:#a5b4fc}
+.app h3{font-size:clamp(26px,3.2vw,36px);font-weight:900;margin-top:24px}
+.app p{font-size:17px;font-weight:500;color:var(--muted);margin-top:12px}
+.pr p,.pr li{color:#c7cdf0}
+.app ul{list-style:none;padding:0;margin-top:20px;display:grid;gap:10px}
+.app li{display:flex;gap:12px;font-weight:700;font-size:16px;align-items:flex-start}
+.app li i{flex:none;font-style:normal;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 12px #14213a12;font-size:16px}
+.pr li i{background:#ffffff14;box-shadow:none}
+.app .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;align-items:center}
+.btn.pn{background:linear-gradient(90deg,var(--pn),#12a982);color:#fff;box-shadow:0 10px 22px #15bca640}
+.btn.sk{background:linear-gradient(90deg,var(--sk),var(--sk2));color:#fff;box-shadow:0 10px 22px #7457c840}
+.btn.pr{background:#fff;color:var(--pr2)}
+.btn.line-pr{background:transparent;color:#fff;box-shadow:0 0 0 1.5px #ffffff55 inset}
+.soon{font-size:14px;font-weight:800;color:var(--sk);background:#fff;border-radius:999px;padding:11px 18px;box-shadow:0 0 0 1.5px #e3d9ff inset}
+.who{display:inline-flex;margin-top:14px;font-size:13px;font-weight:800;border-radius:999px;padding:6px 12px}
+.pn .who{background:#fff;color:var(--pn2)}.sk .who{background:#fff;color:var(--sk)}.pr .who{background:#ffffff18;color:#e0e7ff}
+.phones{display:flex;justify-content:center;gap:18px;position:relative}
+.phone{width:min(46%,236px);background:#0f172a;border-radius:34px;padding:7px;box-shadow:0 30px 60px #14213a35}
+.phone img{border-radius:28px;aspect-ratio:390/844;object-fit:cover;object-position:top;width:100%}
+.phones .phone:nth-child(2){margin-top:46px}
+.pr .phone{background:#0b1030;box-shadow:0 30px 60px #00000055,0 0 0 1px #ffffff1f}
+@media(max-width:900px){
+  .app,.app.rev{grid-template-columns:1fr;padding:34px 22px;gap:34px;border-radius:30px}
+  .app.rev .copy{order:0}
+}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;align-items:stretch;position:relative}
+.step{background:#fff;border:1px solid var(--line);border-radius:26px;padding:24px 20px;box-shadow:0 10px 26px #14213a0d;text-align:center;position:relative}
+.step .e{font-size:34px}
+.step b{display:block;font-size:17px;margin-top:10px;font-weight:900}
+.step p{font-size:14px;color:var(--muted);font-weight:600;margin-top:6px}
+.step .tag{display:inline-block;margin-top:12px;font-size:12px;font-weight:800;border-radius:999px;padding:4px 10px}
+.arrow{display:grid;place-items:center;font-size:26px;color:#c3cad6;font-weight:900}
+.t-pn{background:var(--pnbg);color:var(--pn2)}.t-sk{background:var(--skbg);color:var(--sk)}.t-pr{background:var(--prbg);color:var(--pr)}
+.flowgrid{display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr 44px 1fr;align-items:center}
+.note{margin:26px auto 0;max-width:760px;text-align:center;font-size:15px;color:var(--muted);font-weight:600;background:#fff;border:1px dashed #d9dee7;border-radius:18px;padding:14px 18px}
+@media(max-width:900px){.flowgrid{grid-template-columns:1fr}.arrow{transform:rotate(90deg);height:40px}}
+
+/* chooser */
+.choose{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.opt{background:#fff;border:1.5px solid var(--line);border-radius:28px;padding:28px 24px;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:10px}
+.opt:hover{transform:translateY(-3px);box-shadow:0 16px 34px #14213a14}
+.opt .q{font-size:20px;font-weight:900;letter-spacing:-.01em;line-height:1.2}
+.opt .s{font-size:15px;color:var(--muted);font-weight:600}
+.opt .r{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-weight:800;font-size:15px}
+.opt .r img{width:36px;height:36px;border-radius:11px}
+.opt.o-pn:hover{border-color:var(--pn)}.opt.o-sk:hover{border-color:var(--sk)}.opt.o-pr:hover{border-color:var(--pr)}
+@media(max-width:900px){.choose{grid-template-columns:1fr}}
+
+/* compare */
+.tbl{background:#fff;border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 10px 26px #14213a0a}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-size:14px;font-weight:900;background:#fbfbfd}
+th .c{display:flex;align-items:center;gap:8px}
+th img{width:26px;height:26px;border-radius:8px}
+td:first-child{font-weight:800;color:var(--muted);width:20%}
+td{font-weight:600}
+.scroll{overflow-x:auto}
+.scroll table{min-width:720px}
+
+/* values */
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.val{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px}
+.val .e{font-size:30px}
+.val b{display:block;margin-top:10px;font-size:17px;font-weight:900}
+.val p{font-size:14.5px;color:var(--muted);font-weight:600;margin-top:6px}
+@media(max-width:900px){.vals{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.vals{grid-template-columns:1fr}}
+
+/* contact */
+.contact{background:var(--ink);color:#fff;border-radius:40px;padding:56px;display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:center}
+.contact h2{font-size:clamp(28px,3.8vw,42px);font-weight:900}
+.contact p{color:#b9c2d6;font-weight:600;margin-top:12px;font-size:17px}
+.contact .acts{display:flex;flex-direction:column;gap:12px}
+.contact .btn{justify-content:flex-start}
+.btn.w{background:#fff;color:var(--ink)}
+.btn.wl{background:#ffffff12;color:#fff;box-shadow:0 0 0 1px #ffffff26 inset}
+@media(max-width:900px){.contact{grid-template-columns:1fr;padding:34px 24px;border-radius:30px}}
+
+footer{padding:40px 0 50px;color:var(--muted);font-size:14px;font-weight:600}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+footer a{text-decoration:none;font-weight:700}
+footer nav{display:flex;gap:18px;flex-wrap:wrap}
+
+.plat{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.plat span{font-size:13px;font-weight:800;border-radius:999px;padding:6px 12px;background:#fff;box-shadow:0 0 0 1.5px var(--line) inset;color:var(--ink)}
+.plat span.ios{color:var(--muted);box-shadow:0 0 0 1.5px #d9dee7 inset;background:transparent;border:0}
+.pr .plat span{background:#ffffff14;box-shadow:0 0 0 1px #ffffff26 inset;color:#fff}
+.pr .plat span.ios{background:transparent;color:#c7cdf0}
+.avail{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:26px}
+.avail span{font-size:14px;font-weight:800;background:#fff;border-radius:999px;padding:8px 14px;box-shadow:0 4px 14px #14213a10}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+.hl{animation:hl 1.6s ease}
+@keyframes hl{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 6px #ffae2499}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="PlayNest Family">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>PlayNest <span style="color:var(--sk)">Family</span></span>
+    </a>
+    <nav class="links" aria-label="Ενότητες">
+      <a href="#apps">Εφαρμογές</a>
+      <a href="#together">Πώς συνδέονται</a>
+      <a href="#choose">Ποια μου ταιριάζει;</a>
+      <a href="#contact">Επικοινωνία</a>
+    </nav>
+    <a class="btn dark" href="#choose" style="padding:10px 18px;font-size:14px">Ξεκινήστε</a>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow">🪺 Viorilo Digital</span>
+    <h1>Τρεις εφαρμογές, <span class="g">μία οικογένεια</span> για να μεγαλώνουν τα παιδιά παίζοντας</h1>
+    <p class="lead">Ιδέες παιχνιδιού για κάθε γονιό, δραστηριότητες για δεξιότητες στο σπίτι και ένα εργαλείο για θεραπευτές που φέρνει τη συνεδρία ως το σαλόνι.</p>
+    <div class="cta">
+      <a class="btn dark" href="#choose">Ποια εφαρμογή μου ταιριάζει;</a>
+      <a class="btn ghost" href="#apps">Δείτε τις εφαρμογές ↓</a>
+    </div>
+    <div class="avail"><span>🌐 Web</span><span>🤖 Android</span><span>🍎 iOS · σύντομα</span></div>
+    <div class="trio">
+      <a href="#playnest"><img src="/img/icon-playnest.webp" alt="" width="124" height="124">PlayNest<span>για κάθε γονιό</span></a>
+      <a href="#skills"><img src="/img/icon-skills.webp" alt="" width="124" height="124">PlayNest Skills<span>για δεξιότητες</span></a>
+      <a href="#pro"><img src="/img/icon-pro.webp" alt="" width="124" height="124">PlayNest Pro<span>για ειδικούς</span></a>
+    </div>
+  </div>
+</div>
+
+<section id="apps" style="padding-top:40px">
+  <div class="wrap">
+
+    <article class="app pn reveal" id="playnest">
+      <div class="copy">
+        <div class="head"><img src="/img/icon-playnest.webp" alt=""><div><b>PlayNest</b><span>Ιδέες παιχνιδιού για κάθε στιγμή</span></div></div>
+        <span class="who">👨‍👩‍👧 Για γονείς παιδιών 1–8 ετών</span><div class="plat"><span>🌐 Web</span><span>🤖 Android</span><span class="ios">🍎 iOS · σύντομα</span></div>
+        <h3>«Τι να παίξουμε σήμερα;» Η απάντηση σε ένα δευτερόλεπτο.</h3>
+        <p>Δραστηριότητες χωρίς οθόνες, με υλικά του σπιτιού, για την ηλικία του παιδιού, τον χρόνο που έχετε και το μέρος όπου βρίσκεστε.</p>
+        <ul>
+          <li><i>🎨</i>250 δραστηριότητες βήμα-βήμα</li>
+          <li><i>🎄</i>Θέματα εποχής: Χριστούγεννα, Απόκριες, Πάσχα, καλοκαίρι</li>
+          <li><i>⭐</i>Αστεράκια, αυτοκόλλητα και ανταμοιβές για τα παιδιά</li>
+          <li><i>🧰</i>Εργαλεία γονέα: χρονόμετρο, ρουτίνες, συναισθήματα</li>
+        </ul>
+        <div class="row">
+          <a class="btn pn" href="https://playnest.kosbouris.workers.dev/app/">Ανοίξτε το δωρεάν →</a>
+          <a class="btn ghost" href="https://github.com/VioriloDigital/playnest/releases/latest/download/PlayNest.apk">⬇ Android</a>
+        </div>
+      </div>
+      <div class="phones">
+        <div class="phone"><img src="/img/playnest-1.webp" alt="Η Αρχική του PlayNest" loading="lazy"></div>
+        <div class="phone"><img src="/img/playnest-2.webp" alt="Χριστουγεννιάτικες δραστηριότητες στο PlayNest" loading="lazy"></div>
+      </div>
+    </article>
+
+    <article class="app sk rev reveal" id="skills">
+      <div class="copy">
+        <div class="head"><img src="/img/icon-skills.webp" alt=""><div><b>PlayNest Skills</b><span>Play · Grow · Shine</span></div></div>
+        <span class="who">🧩 Για γονείς και εκπαιδευτικούς παιδιών σχολικής ηλικίας</span><div class="plat"><span>🌐 Web</span><span>🤖 Android</span><span class="ios">🍎 iOS · σύντομα</span></div>
+        <h3>Δεξιότητες που χτίζονται στο σπίτι, μέσα από παιχνίδι.</h3>
+        <p>Για παιδιά που χρειάζονται λίγη παραπάνω στήριξη στην ανάγνωση, στον λόγο, στην προσοχή ή στα συναισθήματα. Δεν απαιτείται διάγνωση: η ηλικία, οι ανάγκες και τα ενδιαφέροντα αρκούν.</p>
+        <ul>
+          <li><i>📖</i>200 δραστηριότητες: ανάγνωση, μαθηματικά, προσοχή, επικοινωνία, αισθητηριακά</li>
+          <li><i>🎯</i>Στόχοι, Smart Weekly Plan και αναφορά προόδου</li>
+          <li><i>🗓️</i>Οπτικές ρουτίνες, κοινωνικές ιστορίες, κάρτες επικοινωνίας</li>
+          <li><i>👧</i>Ξεχωριστό προφίλ για κάθε παιδί</li>
+        </ul>
+        <div class="row">
+          <span class="soon">📱 Κυκλοφορεί σύντομα</span>
+          <a class="btn ghost" href="#contact">Ενημερώστε με</a>
+        </div>
+      </div>
+      <div class="phones">
+        <div class="phone"><img src="/img/skills-1.webp" alt="Η Αρχική του PlayNest Skills" loading="lazy"></div>
+        <div class="phone"><img src="/img/skills-2.webp" alt="Η βιβλιοθήκη δραστηριοτήτων του PlayNest Skills" loading="lazy"></div>
+      </div>
+    </article>
+
+    <article class="app pr reveal" id="pro">
+      <div class="copy">
+        <div class="head"><img src="/img/icon-pro.webp" alt=""><div><b>PlayNest Pro</b><span>Για την πρακτική σας</span></div></div>
+        <span class="who">🩺 Για λογοθεραπευτές, εργοθεραπευτές, ειδικούς παιδαγωγούς</span><div class="plat"><span>🌐 Web</span><span>🤖 Android</span><span class="ios">🍎 iOS · σύντομα</span></div>
+        <h3>Κάθε συνεδρία συνδέεται με το επόμενο μικρό βήμα στο σπίτι.</h3>
+        <p>Φάκελοι παιδιών, στόχοι, συνεδρίες και ραντεβού σε ένα σημείο, με προγράμματα για το σπίτι που ο γονιός καταλαβαίνει.</p>
+        <ul>
+          <li><i>📁</i>Φάκελοι παιδιών, τράπεζα στόχων ανά ειδικότητα</li>
+          <li><i>✍️</i>Γρήγορη καταγραφή συνεδρίας και Session Copilot</li>
+          <li><i>🏠</i>Home Programs και φυλλάδιο για τον γονέα με ιδιωτικό σύνδεσμο</li>
+          <li><i>📊</i>Αναφορές προόδου, ημερολόγιο, οικονομικά, ΓΚΠΔ</li>
+        </ul>
+        <div class="row">
+          <a class="btn pr" href="https://playnest-pro.kosbouris.workers.dev">Δημιουργία λογαριασμού →</a>
+          <a class="btn line-pr" href="https://playnest-pro.kosbouris.workers.dev/login">Σύνδεση</a>
+        </div>
+      </div>
+      <div class="phones">
+        <div class="phone"><img src="/img/pro-1.webp" alt="Ο πίνακας ελέγχου του PlayNest Pro" loading="lazy"></div>
+        <div class="phone"><img src="/img/pro-2.webp" alt="Καταγραφή συνεδρίας στο PlayNest Pro" loading="lazy"></div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="together" style="background:#fff">
+  <div class="wrap">
+    <div class="sh reveal">
+      <span class="eyebrow">🔗 Πώς συνδέονται</span>
+      <h2>Ο ειδικός, ο γονιός και το παιδί, στην ίδια σελίδα</h2>
+      <p>Κάθε εφαρμογή στέκεται μόνη της. Μαζί κλείνουν τον κύκλο ανάμεσα στο γραφείο του θεραπευτή και στο σπίτι.</p>
+    </div>
+    <div class="flowgrid reveal">
+      <div class="step"><div class="e">🩺</div><b>Συνεδρία</b><p>Ο ειδικός ορίζει στόχους και καταγράφει την πρόοδο.</p><span class="tag t-pr">PlayNest Pro</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="e">🏠</div><b>Πρόγραμμα για το σπίτι</b><p>Λίγες, στοχευμένες δραστηριότητες για την εβδομάδα.</p><span class="tag t-pr">PlayNest Pro</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="e">🧩</div><b>Εξάσκηση με παιχνίδι</b><p>Ο γονιός τις κάνει με το παιδί, βήμα-βήμα.</p><span class="tag t-sk">PlayNest Skills</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="e">💬</div><b>Feedback</b><p>Τι έγινε, τι άρεσε, τι δυσκόλεψε, πίσω στον ειδικό.</p><span class="tag t-pr">PlayNest Pro</span></div>
+    </div>
+    <p class="note reveal">🎈 Και για όλες τις υπόλοιπες ώρες της μέρας, το <b style="color:var(--pn2)">PlayNest</b> δίνει ιδέες για απλό, χαρούμενο παιχνίδι. <br>Η απευθείας αποστολή προγραμμάτων από το Pro στο Skills ετοιμάζεται· μέχρι τότε ο ειδικός στέλνει φυλλάδιο με σύνδεσμο.</p>
+  </div>
+</section>
+
+<section id="choose">
+  <div class="wrap">
+    <div class="sh reveal">
+      <span class="eyebrow">🧭 Ποια μου ταιριάζει;</span>
+      <h2>Διαλέξτε αυτό που σας περιγράφει</h2>
+    </div>
+    <div class="choose reveal">
+      <button class="opt o-pn" data-go="playnest"><span class="q">«Θέλω ιδέες για να παίζουμε κάθε μέρα»</span><span class="s">Είμαι γονιός ή παππούς/γιαγιά παιδιού 1–8 ετών και ψάχνω δραστηριότητες χωρίς οθόνες.</span><span class="r"><img src="/img/icon-playnest.webp" alt="">PlayNest →</span></button>
+      <button class="opt o-sk" data-go="skills"><span class="q">«Θέλω να βοηθήσω το παιδί σε μια δεξιότητα»</span><span class="s">Ανάγνωση, λόγος, προσοχή, συναισθήματα: θέλω στοχευμένη εξάσκηση στο σπίτι ή στην τάξη.</span><span class="r"><img src="/img/icon-skills.webp" alt="">PlayNest Skills →</span></button>
+      <button class="opt o-pr" data-go="pro"><span class="q">«Είμαι θεραπευτής ή ειδικός παιδαγωγός»</span><span class="s">Θέλω να οργανώσω φακέλους, συνεδρίες και προγράμματα για το σπίτι.</span><span class="r"><img src="/img/icon-pro.webp" alt="">PlayNest Pro →</span></button>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap">
+    <div class="sh reveal"><span class="eyebrow">📋 Με μια ματιά</span><h2>Σύγκριση</h2></div>
+    <div class="tbl reveal"><div class="scroll">
+      <table>
+        <tr><th></th><th><span class="c"><img src="/img/icon-playnest.webp" alt="">PlayNest</span></th><th><span class="c"><img src="/img/icon-skills.webp" alt="">PlayNest Skills</span></th><th><span class="c"><img src="/img/icon-pro.webp" alt="">PlayNest Pro</span></th></tr>
+        <tr><td>Για ποιον</td><td>Γονείς παιδιών 1–8</td><td>Γονείς & εκπαιδευτικοί</td><td>Θεραπευτές & ειδικοί</td></tr>
+        <tr><td>Τι κάνει</td><td>Ιδέες για καθημερινό παιχνίδι</td><td>Στοχευμένη εξάσκηση δεξιοτήτων</td><td>Διαχείριση πρακτικής & Home Programs</td></tr>
+        <tr><td>Περιεχόμενο</td><td>250 δραστηριότητες, 10 θέματα εποχής</td><td>200 δραστηριότητες, ρουτίνες, κοινωνικές ιστορίες</td><td>Τράπεζα στόχων, 50 δραστηριότητες για το σπίτι</td></tr>
+        <tr><td>Πού</td><td>Web & Android · iOS σύντομα</td><td>Web & Android · iOS σύντομα</td><td>Web & Android · iOS σύντομα</td></tr>
+        <tr><td>Κόστος</td><td>Δωρεάν · Plus με 7 μέρες δοκιμή</td><td>Δωρεάν (50) · Premium 5,99 €/μήνα</td><td>Δωρεάν σε αυτή τη φάση</td></tr>
+        <tr><td>Λογαριασμός</td><td>Δεν χρειάζεται</td><td>Δεν χρειάζεται</td><td>Ναι, με ασφαλή αποθήκευση στην ΕΕ</td></tr>
+      </table>
+    </div></div>
+  </div>
+</section>
+
+<section style="padding-top:20px">
+  <div class="wrap">
+    <div class="vals reveal">
+      <div class="val"><div class="e">📵</div><b>Παιχνίδι, όχι οθόνη</b><p>Οι εφαρμογές είναι για τον μεγάλο· το παιδί παίζει με τα χέρια, τη φωνή και τη φαντασία του.</p></div>
+      <div class="val"><div class="e">🇬🇷</div><b>Ελληνικά & Αγγλικά</b><p>Γραμμένες από την αρχή στα ελληνικά, με ελληνικές γιορτές και ελληνικό σχολείο.</p></div>
+      <div class="val"><div class="e">🔒</div><b>Σεβασμός στα δεδομένα</b><p>Χωρίς διαφημίσεις. Στο PlayNest και στο Skills τα δεδομένα μένουν στη συσκευή· στο Pro φυλάσσονται στην ΕΕ.</p></div>
+      <div class="val"><div class="e">💛</div><b>Χωρίς ετικέτες</b><p>Κάθε παιδί προχωρά με τον δικό του ρυθμό. Δεν χρειάζεται διάγνωση για να ξεκινήσετε.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="padding-top:20px">
+  <div class="wrap">
+    <div class="contact reveal">
+      <div>
+        <h2>Σχολείο, κέντρο ή θεραπευτής; Ας μιλήσουμε.</h2>
+        <p>Για συνεργασίες, ομαδικούς λογαριασμούς, ενημέρωση για την κυκλοφορία στο iOS ή απλώς μια ιδέα, γράψτε μας.</p>
+      </div>
+      <div class="acts">
+        <a class="btn w" href="mailto:info@viorilo.gr?subject=PlayNest%20Family">✉️ info@viorilo.gr</a>
+        <a class="btn wl" href="https://playnest.kosbouris.workers.dev/app/">🪺 Ανοίξτε το PlayNest</a>
+        <a class="btn wl" href="https://playnest-pro.kosbouris.workers.dev">🩺 Ανοίξτε το PlayNest Pro</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="y">2026</span> Viorilo Digital · PlayNest Family</span>
+    <nav>
+      <a href="https://playnest.kosbouris.workers.dev/privacy.html">Απόρρητο PlayNest</a>
+      <a href="https://playnest-pro.kosbouris.workers.dev/aporrito">Απόρρητο PlayNest Pro</a>
+      <a href="https://playnest-pro.kosbouris.workers.dev/oroi">Όροι Pro</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+document.getElementById('y').textContent = new Date().getFullYear()
+document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => {
+  const el = document.getElementById(b.dataset.go)
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl')
+}))
+const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: .12 }) : null
+document.querySelectorAll('.reveal').forEach((el) => io ? io.observe(el) : el.classList.add('in'))
+</script>
+</body>
+</html>
