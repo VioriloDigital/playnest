@@ -13,6 +13,7 @@ export default {
   async fetch(req) {
     const url = new URL(req.url)
     let path = url.pathname
+    if (FILES[path + "/index.html"]) return Response.redirect(url.origin + path + "/" + url.search, 301)
     if (path.endsWith("/")) path += "index.html"
     const file = FILES[path] ?? FILES[path + ".html"]
     if (!file) return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } })
