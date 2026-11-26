@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import logo from "../logo.png"
+import { activities, FREE } from "../lib/activities"
 import { pick2 } from "../lib/i18n"
 import { go } from "../lib/router"
 import { useStore } from "../lib/store"
@@ -24,12 +25,12 @@ const SLIDES: Slide[] = [
     el: {
       title: "Καλώς ήρθατε στο PlayNest",
       text: "Ιδέες παιχνιδιού για παιδιά 1–8 ετών, για κάθε στιγμή της μέρας. Δείτε σε ένα λεπτό τι μπορείτε να κάνετε.",
-      points: ["50 δωρεάν δραστηριότητες και 150 ακόμη με το Plus", "Αστεράκια και αυτοκόλλητα για τα παιδιά", "Χωρίς λογαριασμό: όλα μένουν στη συσκευή σας"],
+      points: [`${FREE.length} δωρεάν δραστηριότητες και ${activities.length - FREE.length} ακόμη με το Plus`, "Αστεράκια και αυτοκόλλητα για τα παιδιά", "Χωρίς λογαριασμό: όλα μένουν στη συσκευή σας"],
     },
     en: {
       title: "Welcome to PlayNest",
       text: "Play ideas for children aged 1–8, for every moment of the day. Here's what you can do, in one minute.",
-      points: ["50 free activities and 150 more with Plus", "Stars and stickers for the children", "No account: everything stays on your device"],
+      points: [`${FREE.length} free activities and ${activities.length - FREE.length} more with Plus`, "Stars and stickers for the children", "No account: everything stays on your device"],
     },
   },
   {
@@ -55,13 +56,13 @@ const SLIDES: Slide[] = [
     to: "explore",
     el: {
       title: "Explore: όλες οι δραστηριότητες",
-      text: "Ψάξτε σε 200 δραστηριότητες με κατηγορίες, διάρκεια και αναζήτηση.",
+      text: `Ψάξτε σε ${activities.length} δραστηριότητες με κατηγορίες, εποχές, διάρκεια και αναζήτηση.`,
       points: ["13 κατηγορίες: STEM, έξω, ταξίδι, βροχερή μέρα, νήπια…", "Αναζήτηση και στα υλικά: γράψτε «χαρτί» ή «κουτί»", "Φίλτρο διάρκειας: 5, 15, 30 ή 60 λεπτά"],
       cta: "Explore",
     },
     en: {
       title: "Explore: every activity",
-      text: "Browse 200 activities by category, length and search.",
+      text: `Browse ${activities.length} activities by category, season, length and search.`,
       points: ["13 categories: STEM, outdoor, travel, rainy day, toddlers…", "Search materials too: type “paper” or “box”", "Filter by length: 5, 15, 30 or 60 minutes"],
       cta: "Explore",
     },
@@ -140,14 +141,14 @@ const SLIDES: Slide[] = [
     to: "plus",
     el: {
       title: "PlayNest Plus",
-      text: "Όλες οι 200 δραστηριότητες και έξυπνα εργαλεία. Δοκιμάστε το δωρεάν για 7 μέρες.",
-      points: ["150 επιπλέον δραστηριότητες, STEM και packs", "PlayNest AI: νέα δραστηριότητα από όσα έχετε στο σπίτι", "Snap & Play: φωτογραφία → ιδέες παιχνιδιού", "Έως 3 παιδιά και κοινές δραστηριότητες για αδέλφια"],
+      text: `Όλες οι ${activities.length} δραστηριότητες, μαζί με τις εποχιακές, και έξυπνα εργαλεία. Δοκιμάστε το δωρεάν για 7 μέρες.`,
+      points: [`${activities.length - FREE.length} επιπλέον δραστηριότητες, εποχιακά θέματα, STEM και packs`, "PlayNest AI: νέα δραστηριότητα από όσα έχετε στο σπίτι", "Snap & Play: φωτογραφία → ιδέες παιχνιδιού", "Έως 3 παιδιά και κοινές δραστηριότητες για αδέλφια"],
       cta: "Plus",
     },
     en: {
       title: "PlayNest Plus",
-      text: "All 200 activities and smart tools. Try it free for 7 days.",
-      points: ["150 more activities, STEM and packs", "PlayNest AI: a new activity from what you have at home", "Snap & Play: photo → play ideas", "Up to 3 children and shared activities for siblings"],
+      text: `All ${activities.length} activities, seasonal ones included, and smart tools. Try it free for 7 days.`,
+      points: [`${activities.length - FREE.length} more activities, seasonal themes, STEM and packs`, "PlayNest AI: a new activity from what you have at home", "Snap & Play: photo → play ideas", "Up to 3 children and shared activities for siblings"],
       cta: "Plus",
     },
   },
@@ -300,7 +301,7 @@ export function Intro() {
               )}
             </p>
             <div className="introFeatures">
-              <div>🎨<span>{p("200 δραστηριότητες", "200 activities")}</span></div>
+              <div>🎨<span>{p(`${activities.length} δραστηριότητες`, `${activities.length} activities`)}</span></div>
               <div>⭐<span>{p("Αστεράκια & αυτοκόλλητα", "Stars & stickers")}</span></div>
               <div>🧰<span>{p("Εργαλεία για γονείς", "Parent tools")}</span></div>
               <div>🔒<span>{p("Χωρίς λογαριασμό", "No account")}</span></div>

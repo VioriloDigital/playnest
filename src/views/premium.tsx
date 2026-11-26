@@ -10,6 +10,7 @@ const PLUS_COUNT = activities.length - FREE.length
 /** Rows of the Free vs Plus comparison. `free` is the free amount, or false when Plus only. */
 const ROWS: { icon: string; el: string; en: string; free: [string, string] | false; plus: [string, string] }[] = [
   { icon: "🎨", el: "Δραστηριότητες", en: "Activities", free: [`${FREE.length}`, `${FREE.length}`], plus: [`${activities.length} (+${PLUS_COUNT})`, `${activities.length} (+${PLUS_COUNT})`] },
+  { icon: "🎉", el: "Θέματα εποχής (Χριστούγεννα, Πάσχα, καλοκαίρι…)", en: "Seasonal themes (Christmas, Easter, summer…)", free: ["1/θέμα", "1/theme"], plus: ["✓", "✓"] },
   { icon: "🔬", el: "STEM, οικογένεια, όλα τα packs", en: "STEM, family, all packs", free: false, plus: ["✓", "✓"] },
   { icon: "🤖", el: "PlayNest AI: νέες ιδέες από ό,τι έχετε", en: "PlayNest AI: new ideas from what you have", free: false, plus: ["✓", "✓"] },
   { icon: "📸", el: "Snap & Play: φωτογραφία → παιχνίδι", en: "Snap & Play: photo → game", free: false, plus: ["✓", "✓"] },

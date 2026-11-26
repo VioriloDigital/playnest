@@ -19,6 +19,7 @@ import { useCompleteActivity } from "../lib/rewards"
 import { StarsCard } from "./rewards"
 import { openTour } from "./intro"
 import { ToolsCard } from "./tools"
+import { SeasonCard } from "./season"
 import { PlusLock } from "./premium"
 import { canOfferInstall, InstallBanner, installApp } from "./install"
 import { reportActivity } from "../lib/ai"
@@ -66,9 +67,10 @@ export function Home() {
         </button>
       </div>
       <button className="exploreBtn" onClick={() => go("explore")}>
-        {t(l, "explore")}
+        {t(l, "explore").replace("{n}", String(activities.length))}
       </button>
       <ProfileCard />
+      <SeasonCard />
       <InstallBanner />
       <StarsCard />
       <ToolsCard />
